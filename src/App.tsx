@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type MenuOpenState = boolean
 
@@ -376,7 +376,7 @@ function MenuDrawer({ onClose }: { onClose: () => void }) {
             </button>
           </div>
 
-          <nav className="flex flex-col gap-6 text-3xl font-roboto-condensed font-black uppercase text-dark-black">
+          <nav className="flex flex-col gap-6 text-2xl font-roboto-condensed font-black uppercase text-dark-black">
             <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">Home</a>
             <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">About</a>
             <a href="#services" onClick={onClose} className="hover:text-primary transition-colors">Service</a>
@@ -458,7 +458,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.1 }}
-            className="font-roboto-condensed text-[clamp(3rem,8vw,6rem)] font-black leading-[0.96] tracking-tight text-dark-black uppercase mb-6"
+            className="font-roboto-condensed text-[clamp(2.6rem,6.8vw,4.9rem)] font-black leading-[0.96] tracking-tight text-dark-black uppercase mb-6"
           >
             We Build{' '}
             <span className="relative inline-block">
@@ -564,8 +564,8 @@ function HeroSection() {
           >
             <div className="relative organic-mask-hero hero-img-ring bg-bg-deep aspect-square w-full max-w-[460px] overflow-hidden">
               <img
-                src="/site-images/site-25-69b4e4c8e4f0bbee0226282b-mask-group-18-.webp"
-                alt="Digital marketing portrait"
+                src="/site-images/brand1-generated-hero.png"
+                alt="Premium Brand1Solutions digital agency command center"
                 className="h-full w-full object-cover scale-[1.04]"
               />
               {/* Image overlay gradient */}
@@ -706,7 +706,7 @@ function AboutSection() {
               <span className="h-2 w-2 rounded-full bg-primary" />
               About Studio
             </span>
-            <h2 className="font-roboto-condensed text-4xl md:text-5xl lg:text-6xl font-black leading-[0.96] tracking-tight text-dark-black uppercase">
+            <h2 className="font-roboto-condensed text-3xl md:text-4xl lg:text-5xl font-black leading-[0.96] tracking-tight text-dark-black uppercase">
               We Build <br />
               <span className="text-primary">Brands</span> That <br />
               Last Forever
@@ -749,8 +749,8 @@ function AboutSection() {
             {/* Tall primary image */}
             <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 340 }}>
               <img
-                src="/site-images/site-25-69b4e4c8e4f0bbee0226282b-mask-group-18-.webp"
-                alt="Agency team"
+                src="/site-images/brand1-generated-about.png"
+                alt="Brand1Solutions creative team collaborating in a modern studio"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black/40 via-transparent to-transparent" />
@@ -1084,7 +1084,7 @@ function StatsMarquee() {
     <section className="bg-bg-deep py-20 border-b border-border-blue/20 relative overflow-hidden select-none">
       {/* Outer Banner wraps */}
       <div className="border-y-2 border-border-blue py-8 flex items-center whitespace-nowrap overflow-hidden">
-        <div className="animate-marquee-left flex gap-16 text-6xl md:text-8xl font-roboto-condensed font-black uppercase text-dark-black">
+        <div className="animate-marquee-left flex gap-16 text-4xl md:text-6xl lg:text-7xl font-roboto-condensed font-black uppercase text-dark-black">
           {[...Array(6)].map((_, i) => (
             <span key={i} className="flex items-center gap-12">
               <span>DIGITAL _ MARKETING_AGENCY</span>
@@ -1154,7 +1154,7 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
         <div className="grid gap-12 lg:grid-cols-12 items-start">
           {/* Title Left */}
           <div className="lg:col-span-4 text-left">
-            <h2 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black mb-6">
+            <h2 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black mb-6">
               Our Solution Process
             </h2>
             <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
@@ -1311,7 +1311,7 @@ function TestimonialsSection() {
             </div>
 
             <div>
-              <h3 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black leading-none mb-1">
+              <h3 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black leading-none mb-1">
                 01.25K+
               </h3>
               <p className="text-sm font-bold text-deep-gray uppercase tracking-wider">
@@ -1438,7 +1438,7 @@ function FAQSection() {
         <div className="grid gap-12 lg:grid-cols-12 items-start">
           {/* Left Title details */}
           <div className="lg:col-span-4 text-left">
-            <h2 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black mb-6">
+            <h2 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black mb-6">
               Frequently asked questions
             </h2>
             <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
@@ -1647,7 +1647,7 @@ function Footer() {
 
         {/* Giant header signature footer text */}
         <div className="relative pointer-events-none select-none text-center leading-none mt-4">
-          <h3 className="font-roboto-condensed text-[10vw] md:text-[11vw] font-black uppercase tracking-tight text-border-green/20 select-none whitespace-nowrap">
+          <h3 className="font-roboto-condensed text-[clamp(3rem,8.5vw,7.5rem)] font-black uppercase tracking-tight text-border-green/20 select-none whitespace-nowrap">
             Brand1 Solution
           </h3>
         </div>
@@ -1657,4 +1657,5 @@ function Footer() {
 }
 
 export default App
+
 
