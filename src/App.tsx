@@ -56,31 +56,45 @@ type BlogItem = {
 const servicesList: Service[] = [
   {
     id: '01',
-    title: 'Digital Marketing',
-    copy: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow and expand their market reach.',
-    tags: ['UI/UX Design', 'Strategy & Planning', 'Pitchdeck'],
-    image: '/site-images/site-33-69b8c576fa806721378754b4-mask-group-3-optimi.webp',
+    title: 'Web Development',
+    copy: 'Custom websites built with cutting-edge technologies for performance, scalability, and stunning user experiences.',
+    tags: ['Performance', 'Scalable Builds', 'Modern Web'],
+    image: '/site-images/brand1-service-web-development.png',
   },
   {
     id: '02',
-    title: 'Brand Strategy & Identity',
-    copy: 'Crafting unique visual stories, distinct positioning, and cohesive style guidelines that make your brand stand out.',
-    tags: ['Positioning', 'Visual Guidelines', 'Logo Design'],
-    image: '/site-images/site-34-69b8c5846379874173b121dc-mask-group-4-optimi.webp',
+    title: 'UI/UX Design',
+    copy: 'Intuitive, beautiful interfaces designed to delight users and maximize engagement across all platforms.',
+    tags: ['User Flows', 'Interface Design', 'Prototyping'],
+    image: '/site-images/brand1-service-ui-ux-design.png',
   },
   {
     id: '03',
-    title: 'Social Media Marketing',
-    copy: 'Engage with target audiences across modern channels through smart campaign plans, community building, and analysis.',
-    tags: ['Campaign Planning', 'Community Growth', 'Analytics'],
-    image: '/site-images/site-35-69b8c5bbb44546c10a509311-mask-group-5-optimi.webp',
+    title: 'App Development',
+    copy: 'Native and cross-platform mobile apps that deliver seamless experiences, drive user retention, and scale effortlessly.',
+    tags: ['Mobile Apps', 'Cross-Platform', 'Retention'],
+    image: '/site-images/brand1-service-app-development.png',
   },
   {
     id: '04',
-    title: 'Content Creation',
-    copy: 'Premium copywriting, visual assets, photography layouts, and multimedia experiences created around real user stories.',
-    tags: ['Copywriting', 'Graphic Design', 'Photography'],
-    image: '/site-images/site-36-69b8c5c816d94397f9e969d5-mask-group-6-optimi.webp',
+    title: 'E-Commerce Solutions',
+    copy: 'Full-featured online stores with secure payments, inventory management, and conversion optimization.',
+    tags: ['Online Stores', 'Payments', 'Conversion'],
+    image: '/site-images/brand1-service-ecommerce.png',
+  },
+  {
+    id: '05',
+    title: 'SEO & Growth',
+    copy: 'Data-driven SEO strategies and growth marketing campaigns to boost your visibility, organic traffic, and conversions.',
+    tags: ['Technical SEO', 'Organic Traffic', 'Growth Campaigns'],
+    image: '/site-images/brand1-service-seo-growth.png',
+  },
+  {
+    id: '06',
+    title: 'Digital Marketing',
+    copy: 'Strategic campaigns across social media, email, and paid channels to grow your audience and revenue.',
+    tags: ['Social Media', 'Email', 'Paid Channels'],
+    image: '/site-images/brand1-service-digital-marketing.png',
   },
 ]
 
@@ -193,7 +207,7 @@ const faqsList: FAQItem[] = [
   },
   {
     question: 'How do you approach a new project?',
-    answer: 'Every project goes through our three-step solution process: Discover (audience research and deep brand insights), Impact (high-fidelity design and build execution), and Growth (conversion-focused analysis and performance scaling).',
+    answer: 'Every project moves through four clear stages: Discovery, Strategy, Design & Build, and Launch & Grow. This keeps the work focused, measurable, and aligned with your business goals.',
   },
   {
     question: 'How long does it take to see results?',
@@ -240,7 +254,7 @@ function App() {
   // Auto advance process steps to mimic slider auto-play
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveProcessStep((prev) => (prev + 1) % 3)
+      setActiveProcessStep((prev) => (prev + 1) % 4)
     }, 4500)
     return () => clearInterval(timer)
   }, [])
@@ -919,7 +933,7 @@ function ServicesSection() {
             Services
           </h2>
           <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-            Strategic marketing solutions designed to drive growth and measurable results. Solutions built to grow, scale, and perform.
+            Comprehensive digital solutions tailored to elevate your brand and drive measurable results.
           </p>
         </div>
 
@@ -1129,22 +1143,28 @@ function StatsMarquee() {
 function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; setActiveStep: (i: number) => void }) {
   const steps = [
     {
-      num: 'step 01',
-      title: 'Discover',
-      copy: 'We understand your brand, target audience, and business goals through detailed industrial insights, user metrics analysis, and target research workshops.',
+      num: '01',
+      title: 'Discovery',
+      copy: 'We dive deep into your brand, goals, and target audience to build a solid foundation.',
       image: '/site-images/site-17-699fcf647fca9ec7764151b7-simplification-3-.webp',
     },
     {
-      num: 'step 02',
-      title: 'Impact',
-      copy: 'We conceptualize visual frameworks, design systems, modern prototypes, and deploy high-fidelity frontend systems that deliver instant credibility.',
+      num: '02',
+      title: 'Strategy',
+      copy: 'We craft a tailored digital strategy aligned with your business objectives.',
       image: '/site-images/site-16-699fcf63a70c9af4c0143b31-simplification-4-.webp',
     },
     {
-      num: 'step 03',
-      title: 'Growth',
-      copy: 'We analyze ongoing traffic metrics, execute page conversion rate optimization tests, and adjust digital campaigns to scale your brand authority.',
+      num: '03',
+      title: 'Design & Build',
+      copy: 'Our team brings the vision to life with pixel-perfect design and clean code.',
       image: '/site-images/site-15-699fcf6335fca42deeee7c84-simplification-5-.webp',
+    },
+    {
+      num: '04',
+      title: 'Launch & Grow',
+      copy: 'We launch your project and provide ongoing support to drive real results.',
+      image: '/site-images/brand1-service-seo-growth.png',
     },
   ]
 
@@ -1155,10 +1175,10 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
           {/* Title Left */}
           <div className="lg:col-span-4 text-left">
             <h2 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black mb-6">
-              Our Solution Process
+              How We Work
             </h2>
             <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-              A seamless journey that transforms ideas into impactful solutions through creativity, strategy, and performance.
+              A focused process that moves from discovery to strategy, design, launch, and measurable growth.
             </p>
           </div>
 
@@ -1176,7 +1196,7 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
                     {i + 1}
                   </button>
                   {/* Vertical connecting line indicator */}
-                  {i < 2 && (
+                  {i < steps.length - 1 && (
                     <div className="absolute top-10 bottom-0 left-[19px] w-0.5 bg-border-blue/45 overflow-hidden">
                       {activeStep === i && (
                         <div className="absolute top-0 w-full h-full bg-primary animate-pulse" />
