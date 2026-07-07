@@ -1,263 +1,289 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-type MenuOpenState = boolean
+type MenuOpenState = boolean;
 
 type Service = {
-  id: string
-  title: string
-  copy: string
-  tags: string[]
-  image: string
-}
+  id: string;
+  title: string;
+  copy: string;
+  tags: string[];
+  image: string;
+};
 
 type Project = {
-  id: string
-  num: string
-  title: string
-  copy: string
-  image: string
-}
+  id: string;
+  num: string;
+  title: string;
+  copy: string;
+  image: string;
+  category: string;
+  result: string;
+  scope: string[];
+};
 
 type TeamMember = {
-  name: string
-  role: string
-  image: string
+  name: string;
+  role: string;
+  image: string;
   social: {
-    facebook: string
-    instagram: string
-    twitter: string
-    linkedin: string
-  }
-}
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    linkedin: string;
+  };
+};
 
 type Testimonial = {
-  quote: string
-  author: string
-  role: string
-  avatar: string
-  logo: string
-}
+  quote: string;
+  author: string;
+  role: string;
+  avatar: string;
+  logo: string;
+};
 
 type FAQItem = {
-  question: string
-  answer: string
-}
+  question: string;
+  answer: string;
+};
 
 type BlogItem = {
-  author: string
-  date: string
-  category: string
-  title: string
-  excerpt: string
-  image: string
-}
+  author: string;
+  date: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  image: string;
+};
 
 const servicesList: Service[] = [
   {
-    id: '01',
-    title: 'Web Development',
-    copy: 'Custom websites built with cutting-edge technologies for performance, scalability, and stunning user experiences.',
-    tags: ['Performance', 'Scalable Builds', 'Modern Web'],
-    image: '/site-images/brand1-service-web-development.png',
+    id: "01",
+    title: "Web Development",
+    copy: "Custom websites built with cutting-edge technologies for performance, scalability, and stunning user experiences.",
+    tags: ["Performance", "Scalable Builds", "Modern Web"],
+    image: "/site-images/brand1-service-web-development.png",
   },
   {
-    id: '02',
-    title: 'UI/UX Design',
-    copy: 'Intuitive, beautiful interfaces designed to delight users and maximize engagement across all platforms.',
-    tags: ['User Flows', 'Interface Design', 'Prototyping'],
-    image: '/site-images/brand1-service-ui-ux-design.png',
+    id: "02",
+    title: "UI/UX Design",
+    copy: "Intuitive, beautiful interfaces designed to delight users and maximize engagement across all platforms.",
+    tags: ["User Flows", "Interface Design", "Prototyping"],
+    image: "/site-images/brand1-service-ui-ux-design.png",
   },
   {
-    id: '03',
-    title: 'App Development',
-    copy: 'Native and cross-platform mobile apps that deliver seamless experiences, drive user retention, and scale effortlessly.',
-    tags: ['Mobile Apps', 'Cross-Platform', 'Retention'],
-    image: '/site-images/brand1-service-app-development.png',
+    id: "03",
+    title: "App Development",
+    copy: "Native and cross-platform mobile apps that deliver seamless experiences, drive user retention, and scale effortlessly.",
+    tags: ["Mobile Apps", "Cross-Platform", "Retention"],
+    image: "/site-images/brand1-service-app-development.png",
   },
   {
-    id: '04',
-    title: 'E-Commerce Solutions',
-    copy: 'Full-featured online stores with secure payments, inventory management, and conversion optimization.',
-    tags: ['Online Stores', 'Payments', 'Conversion'],
-    image: '/site-images/brand1-service-ecommerce.png',
+    id: "04",
+    title: "E-Commerce Solutions",
+    copy: "Full-featured online stores with secure payments, inventory management, and conversion optimization.",
+    tags: ["Online Stores", "Payments", "Conversion"],
+    image: "/site-images/brand1-service-ecommerce.png",
   },
   {
-    id: '05',
-    title: 'SEO & Growth',
-    copy: 'Data-driven SEO strategies and growth marketing campaigns to boost your visibility, organic traffic, and conversions.',
-    tags: ['Technical SEO', 'Organic Traffic', 'Growth Campaigns'],
-    image: '/site-images/brand1-service-seo-growth.png',
+    id: "05",
+    title: "SEO & Growth",
+    copy: "Data-driven SEO strategies and growth marketing campaigns to boost your visibility, organic traffic, and conversions.",
+    tags: ["Technical SEO", "Organic Traffic", "Growth Campaigns"],
+    image: "/site-images/brand1-service-seo-growth.png",
   },
   {
-    id: '06',
-    title: 'Digital Marketing',
-    copy: 'Strategic campaigns across social media, email, and paid channels to grow your audience and revenue.',
-    tags: ['Social Media', 'Email', 'Paid Channels'],
-    image: '/site-images/brand1-service-digital-marketing.png',
+    id: "06",
+    title: "Digital Marketing",
+    copy: "Strategic campaigns across social media, email, and paid channels to grow your audience and revenue.",
+    tags: ["Social Media", "Email", "Paid Channels"],
+    image: "/site-images/brand1-service-digital-marketing.png",
   },
-]
+];
 
 const projectsList: Project[] = [
   {
-    id: '01',
-    num: '01',
-    title: 'Elevare Digital Marketing',
-    copy: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose.',
-    image: '/site-images/site-37-69b8c663e1748181e8dfef98-mask-group-6-optimi.webp',
+    id: "01",
+    num: "01",
+    title: "Elevare Digital Marketing",
+    copy: "We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose.",
+    image: "/site-images/brand1-project-elevare.png",
+    category: "Digital Growth",
+    result: "+72% campaign lift",
+    scope: ["Brand Strategy", "Paid Campaigns", "Landing Pages"],
   },
   {
-    id: '02',
-    num: '02',
-    title: 'StratEdge Marketing',
-    copy: 'Driving traffic, generating leads, and turning random clicks into long-term loyal brand customers.',
-    image: '/site-images/site-38-69b8c7181b0c19661b2e9419-mask-group-5-optimi.webp',
+    id: "02",
+    num: "02",
+    title: "StratEdge Marketing",
+    copy: "Driving traffic, generating leads, and turning random clicks into long-term loyal brand customers.",
+    image: "/site-images/brand1-project-stratedge.png",
+    category: "Lead Generation",
+    result: "3.1x qualified leads",
+    scope: ["SEO System", "Funnel Design", "Analytics"],
   },
   {
-    id: '03',
-    num: '03',
-    title: 'Momentum Partners',
-    copy: 'Transforming brands with smart positioning strategy, compelling storytelling layouts, and measurable organic growth.',
-    image: '/site-images/site-39-69b8c724d8f8deb69327931d-mask-group-7-optimi.webp',
+    id: "03",
+    num: "03",
+    title: "Momentum Partners",
+    copy: "Transforming brands with smart positioning strategy, compelling storytelling layouts, and measurable organic growth.",
+    image: "/site-images/brand1-project-momentum.png",
+    category: "Brand Experience",
+    result: "+48% engagement",
+    scope: ["Identity Refresh", "Content System", "UX Direction"],
   },
-]
+];
 
 const teamList: TeamMember[] = [
   {
-    name: 'Theresa Webb',
-    role: 'Marketing Specialist',
-    image: '/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp',
-    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+    name: "Theresa Webb",
+    role: "Marketing Specialist",
+    image: "/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
   },
   {
-    name: 'Kristin Watson',
-    role: 'Marketing Specialist',
-    image: '/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp',
-    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+    name: "Kristin Watson",
+    role: "Marketing Specialist",
+    image: "/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
   },
   {
-    name: 'Guy Hawkins',
-    role: 'Marketing Specialist',
-    image: '/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp',
-    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+    name: "Guy Hawkins",
+    role: "Marketing Specialist",
+    image: "/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
   },
   {
-    name: 'Ron Williamson',
-    role: 'Marketing Specialist',
-    image: '/site-images/site-24-69a5069ba1ea7f84bf56b8d6-mask-group-27-.webp',
-    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+    name: "Ron Williamson",
+    role: "Marketing Specialist",
+    image: "/site-images/site-24-69a5069ba1ea7f84bf56b8d6-mask-group-27-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
   },
-]
+];
 
 const testimonialsList: Testimonial[] = [
   {
-    quote: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. They delivered exceptional branding strategies that exceeded our ambitious growth targets.',
-    author: 'Kristin Watson',
-    role: 'Marketing Director',
-    avatar: '/site-images/site-05-699d267f7af63905b9b9a11b-group-18-1-.webp',
-    logo: '/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg',
+    quote:
+      "We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. They delivered exceptional branding strategies that exceeded our ambitious growth targets.",
+    author: "Kristin Watson",
+    role: "Marketing Director",
+    avatar: "/site-images/site-05-699d267f7af63905b9b9a11b-group-18-1-.webp",
+    logo: "/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg",
   },
   {
-    quote: 'Our user acquisition rates doubled within 3 months of partnering with them. Their content creation studio is top-tier and their workflow is highly structured and transparent.',
-    author: 'Liam Anderson',
-    role: 'Product Lead',
-    avatar: '/site-images/site-04-699d26725de35b5d16022330-group-19.webp',
-    logo: '/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg',
+    quote:
+      "Our user acquisition rates doubled within 3 months of partnering with them. Their content creation studio is top-tier and their workflow is highly structured and transparent.",
+    author: "Liam Anderson",
+    role: "Product Lead",
+    avatar: "/site-images/site-04-699d26725de35b5d16022330-group-19.webp",
+    logo: "/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg",
   },
   {
-    quote: 'A dedicated team that aligns creativity directly with performance metrics. The branding guidelines are highly polished, responsive, and easy to roll out across channels.',
-    author: 'Damien Cabral',
-    role: 'Founder & CEO',
-    avatar: '/site-images/site-03-699d265d8569f51df2d0f85f-group-17.webp',
-    logo: '/site-images/site-12-699e74db877c549927bc1e19-logo.svg',
+    quote:
+      "A dedicated team that aligns creativity directly with performance metrics. The branding guidelines are highly polished, responsive, and easy to roll out across channels.",
+    author: "Damien Cabral",
+    role: "Founder & CEO",
+    avatar: "/site-images/site-03-699d265d8569f51df2d0f85f-group-17.webp",
+    logo: "/site-images/site-12-699e74db877c549927bc1e19-logo.svg",
   },
-]
+];
 
 const partnersList = [
   {
-    front: '/site-images/site-12-699e74db877c549927bc1e19-logo.svg',
-    back: '/site-images/site-12-699e74db877c549927bc1e19-logo.svg',
+    front: "/site-images/site-12-699e74db877c549927bc1e19-logo.svg",
+    back: "/site-images/site-12-699e74db877c549927bc1e19-logo.svg",
   },
   {
-    front: '/site-images/site-11-699e74db7b87689148cf41eb-logo-1-.svg',
-    back: '/site-images/site-11-699e74db7b87689148cf41eb-logo-1-.svg',
+    front: "/site-images/site-11-699e74db7b87689148cf41eb-logo-1-.svg",
+    back: "/site-images/site-11-699e74db7b87689148cf41eb-logo-1-.svg",
   },
   {
-    front: '/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg',
-    back: '/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg',
+    front: "/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg",
+    back: "/site-images/site-09-699e74db0cc97f52ce240dec-logo-2-.svg",
   },
   {
-    front: '/site-images/site-10-699e74db2a42138c42cef740-logo-3-.svg',
-    back: '/site-images/site-10-699e74db2a42138c42cef740-logo-3-.svg',
+    front: "/site-images/site-10-699e74db2a42138c42cef740-logo-3-.svg",
+    back: "/site-images/site-10-699e74db2a42138c42cef740-logo-3-.svg",
   },
   {
-    front: '/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg',
-    back: '/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg',
+    front: "/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg",
+    back: "/site-images/site-13-699e74dbb0b1600ed11e3f30-logo-4-.svg",
   },
-]
+];
 
 const faqsList: FAQItem[] = [
   {
-    question: 'What services do you offer?',
-    answer: 'We provide end-to-end digital marketing and branding solutions, including brand strategy, digital marketing, social media management, content creation, performance marketing, and web design.',
+    question: "What services do you offer?",
+    answer:
+      "We provide end-to-end digital marketing and branding solutions, including brand strategy, digital marketing, social media management, content creation, performance marketing, and web design.",
   },
   {
-    question: 'Who do you work with?',
-    answer: 'We work with growth-stage startups, creative agencies, established mid-sized studios, and enterprise brands that require clean positioning and elevated design aesthetic to stand out.',
+    question: "Who do you work with?",
+    answer:
+      "We work with growth-stage startups, creative agencies, established mid-sized studios, and enterprise brands that require clean positioning and elevated design aesthetic to stand out.",
   },
   {
-    question: 'How do you approach a new project?',
-    answer: 'Every project moves through four clear stages: Discovery, Strategy, Design & Build, and Launch & Grow. This keeps the work focused, measurable, and aligned with your business goals.',
+    question: "How do you approach a new project?",
+    answer:
+      "Every project moves through four clear stages: Discovery, Strategy, Design & Build, and Launch & Grow. This keeps the work focused, measurable, and aligned with your business goals.",
   },
   {
-    question: 'How long does it take to see results?',
-    answer: 'While branding refreshes and website launches deliver immediate authority upgrades, content campaigns and performance marketing strategies typically show solid quantitative results within 6 to 12 weeks.',
+    question: "How long does it take to see results?",
+    answer:
+      "While branding refreshes and website launches deliver immediate authority upgrades, content campaigns and performance marketing strategies typically show solid quantitative results within 6 to 12 weeks.",
   },
   {
-    question: 'Do you offer customized solutions?',
-    answer: 'Yes. All campaigns, structures, layouts, and integrations are tailored strictly around your business objective. We build custom websites, custom dashboards, and specialized strategy models.',
+    question: "Do you offer customized solutions?",
+    answer:
+      "Yes. All campaigns, structures, layouts, and integrations are tailored strictly around your business objective. We build custom websites, custom dashboards, and specialized strategy models.",
   },
-]
+];
 
 const blogsList: BlogItem[] = [
   {
-    author: 'Damien Cabral',
-    date: 'Dec 10, 2025',
-    category: 'Marketing',
-    title: 'How to Build a Strong Marketing Strategy That Delivers Results',
-    excerpt: 'A step-by-step guide to creating a marketing strategy that drives growth, engagement, and measurable outcomes.',
-    image: '/site-images/site-30-69b8c388b330469916aa6e98-mask-group-2-optimi.webp',
+    author: "Damien Cabral",
+    date: "Dec 10, 2025",
+    category: "Marketing",
+    title: "How to Build a Strong Marketing Strategy That Delivers Results",
+    excerpt:
+      "A step-by-step guide to creating a marketing strategy that drives growth, engagement, and measurable outcomes.",
+    image:
+      "/site-images/site-30-69b8c388b330469916aa6e98-mask-group-2-optimi.webp",
   },
   {
-    author: 'Liam Anderson',
-    date: 'March 15, 2026',
-    category: 'Advertising',
-    title: 'How to Create an Effective Marketing Strategy That Yields Results',
-    excerpt: 'A comprehensive guide to crafting a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.',
-    image: '/site-images/site-31-69b8c3a21236af6944d5e3f4-mask-group-3-optimi.webp',
+    author: "Liam Anderson",
+    date: "March 15, 2026",
+    category: "Advertising",
+    title: "How to Create an Effective Marketing Strategy That Yields Results",
+    excerpt:
+      "A comprehensive guide to crafting a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.",
+    image:
+      "/site-images/site-31-69b8c3a21236af6944d5e3f4-mask-group-3-optimi.webp",
   },
   {
-    author: 'Liam Thompson',
-    date: 'April 10, 2024',
-    category: 'Advertising',
-    title: 'Crafting an Effective Marketing Strategy That Yields Results',
-    excerpt: 'A comprehensive guide to developing a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.',
-    image: '/site-images/site-32-69b8c45cd9ee14d78c6efa49-mask-group-2-optimi.webp',
+    author: "Liam Thompson",
+    date: "April 10, 2024",
+    category: "Advertising",
+    title: "Crafting an Effective Marketing Strategy That Yields Results",
+    excerpt:
+      "A comprehensive guide to developing a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.",
+    image:
+      "/site-images/site-32-69b8c45cd9ee14d78c6efa49-mask-group-2-optimi.webp",
   },
-]
+];
 
 function App() {
-  const [menuOpen, setMenuOpen] = useState<MenuOpenState>(false)
-  const [activeProject, setActiveProject] = useState<number>(0)
-  const [activeProcessStep, setActiveProcessStep] = useState<number>(0)
+  const [menuOpen, setMenuOpen] = useState<MenuOpenState>(false);
+  const [activeProject, setActiveProject] = useState<number>(0);
+  const [activeProcessStep, setActiveProcessStep] = useState<number>(0);
 
   // Auto advance process steps to mimic slider auto-play
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveProcessStep((prev) => (prev + 1) % 4)
-    }, 4500)
-    return () => clearInterval(timer)
-  }, [])
+      setActiveProcessStep((prev) => (prev + 1) % 4);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-light-blue text-dark-black overflow-hidden font-roboto antialiased selection:bg-primary selection:text-white">
@@ -283,13 +309,19 @@ function App() {
         <ServicesSection />
 
         {/* Projects Accordion Grid */}
-        <ProjectsSection activeProject={activeProject} setActiveProject={setActiveProject} />
+        <ProjectsSection
+          activeProject={activeProject}
+          setActiveProject={setActiveProject}
+        />
 
         {/* Stat Marquee Banner */}
         <StatsMarquee />
 
         {/* Process Section */}
-        <ProcessSection activeStep={activeProcessStep} setActiveStep={setActiveProcessStep} />
+        <ProcessSection
+          activeStep={activeProcessStep}
+          setActiveStep={setActiveProcessStep}
+        />
 
         {/* Team Grid */}
         <TeamSection />
@@ -297,52 +329,96 @@ function App() {
         {/* Testimonials Fading Slider */}
         <TestimonialsSection />
 
-        {/* Partners 3D flip section */}
-        <PartnersSection />
-
         {/* FAQ list */}
         <FAQSection />
 
         {/* Blogs list */}
-        <BlogsSection />
       </main>
 
       {/* Footer */}
       <Footer />
     </div>
-  )
+  );
 }
 
 /* ---------------- HEADER COMPONENT ---------------- */
-function Header({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (o: boolean) => void }) {
+function Header({
+  menuOpen,
+  setMenuOpen,
+}: {
+  menuOpen: boolean;
+  setMenuOpen: (o: boolean) => void;
+}) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border-blue/20 bg-light-blue/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-8">
-        <a href="/" className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black hover:opacity-90 transition-opacity">
+        <a
+          href="/"
+          className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black hover:opacity-90 transition-opacity"
+        >
           <span>Brand1</span>
-          <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">Solution</span>
+          <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">
+            Solution
+          </span>
         </a>
 
         {/* Desktop Links */}
         <nav className="hidden items-center gap-8 lg:flex font-roboto font-semibold text-dark-black/75">
-          <a href="#about" className="hover:text-primary transition-colors">About</a>
-          <a href="#services" className="hover:text-primary transition-colors">Service</a>
-          <a href="#projects" className="hover:text-primary transition-colors">Projects</a>
-          <a href="#process" className="hover:text-primary transition-colors">Process</a>
-          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
-          <a href="#blogs" className="hover:text-primary transition-colors">Blogs</a>
+          <a href="#about" className="hover:text-primary transition-colors">
+            About
+          </a>
+          <a href="#services" className="hover:text-primary transition-colors">
+            Service
+          </a>
+          <a href="#projects" className="hover:text-primary transition-colors">
+            Projects
+          </a>
+          <a href="#process" className="hover:text-primary transition-colors">
+            Process
+          </a>
+          <a href="#faq" className="hover:text-primary transition-colors">
+            FAQ
+          </a>
+          <a href="#blogs" className="hover:text-primary transition-colors">
+            Blogs
+          </a>
         </nav>
 
         {/* Desktop CTA & Mobile Toggle */}
         <div className="flex items-center gap-4">
-          <a href="#contact" className="primary-button-hover group hidden items-center gap-2 rounded-full border border-border-blue bg-dark-black px-6 py-2.5 text-white lg:flex">
-            <span className="font-roboto-condensed text-sm font-bold uppercase tracking-wider">Contact Us</span>
+          <a
+            href="#contact"
+            className="primary-button-hover group hidden items-center gap-2 rounded-full border border-border-blue bg-dark-black px-6 py-2.5 text-white lg:flex"
+          >
+            <span className="font-roboto-condensed text-sm font-bold uppercase tracking-wider">
+              Contact Us
+            </span>
             <div className="relative flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white overflow-hidden">
-              <svg className="btn-arrow-slide h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <svg
+                className="btn-arrow-slide h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
-              <svg className="absolute -left-5 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <svg
+                className="absolute -left-5 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </div>
           </a>
@@ -353,14 +429,20 @@ function Header({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (o:
             className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-border-blue/60 bg-transparent transition-colors hover:bg-border-blue/10"
             aria-label="Toggle Drawer Menu"
           >
-            <div className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-            <div className={`h-0.5 w-5 bg-dark-black transition-opacity duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-            <div className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+            <div
+              className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? "translate-y-2 rotate-45" : ""}`}
+            />
+            <div
+              className={`h-0.5 w-5 bg-dark-black transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""}`}
+            />
+            <div
+              className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`}
+            />
           </button>
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 /* ---------------- MOBILE MENU DRAWER ---------------- */
@@ -373,58 +455,130 @@ function MenuDrawer({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-50 flex justify-end bg-dark-black/40 backdrop-blur-sm"
     >
       <motion.div
-        initial={{ x: '100%' }}
+        initial={{ x: "100%" }}
         animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className="h-full w-full max-w-md bg-light-blue p-8 border-l border-border-blue/40 shadow-2xl flex flex-col justify-between"
       >
         <div>
           <div className="flex items-center justify-between mb-16">
             <div className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black">
               <span>Brand1</span>
-              <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">Solution</span>
+              <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">
+                Solution
+              </span>
             </div>
-            <button onClick={onClose} className="h-10 w-10 border border-border-blue rounded-full grid place-items-center hover:bg-border-blue/10 transition-colors">
+            <button
+              onClick={onClose}
+              className="h-10 w-10 border border-border-blue rounded-full grid place-items-center hover:bg-border-blue/10 transition-colors"
+            >
               ✕
             </button>
           </div>
 
           <nav className="flex flex-col gap-6 text-2xl font-roboto-condensed font-black uppercase text-dark-black">
-            <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">Home</a>
-            <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">About</a>
-            <a href="#services" onClick={onClose} className="hover:text-primary transition-colors">Service</a>
-            <a href="#projects" onClick={onClose} className="hover:text-primary transition-colors">Projects</a>
-            <a href="#process" onClick={onClose} className="hover:text-primary transition-colors">Process</a>
-            <a href="#faq" onClick={onClose} className="hover:text-primary transition-colors">FAQ</a>
-            <a href="#blogs" onClick={onClose} className="hover:text-primary transition-colors">Blogs</a>
+            <a
+              href="#about"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              Home
+            </a>
+            <a
+              href="#about"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              About
+            </a>
+            <a
+              href="#services"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              Service
+            </a>
+            <a
+              href="#projects"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              Projects
+            </a>
+            <a
+              href="#process"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              Process
+            </a>
+            <a
+              href="#faq"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              FAQ
+            </a>
+            <a
+              href="#blogs"
+              onClick={onClose}
+              className="hover:text-primary transition-colors"
+            >
+              Blogs
+            </a>
           </nav>
         </div>
 
         <div>
           <div className="h-px bg-border-blue/30 my-6" />
-          <a href="#contact" onClick={onClose} className="primary-button-hover group flex w-full items-center justify-center gap-3 rounded-full bg-dark-black py-4 text-white">
-            <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">Contact Us</span>
+          <a
+            href="#contact"
+            onClick={onClose}
+            className="primary-button-hover group flex w-full items-center justify-center gap-3 rounded-full bg-dark-black py-4 text-white"
+          >
+            <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">
+              Contact Us
+            </span>
             <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white overflow-hidden">
-              <svg className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <svg
+                className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
-              <svg className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <svg
+                className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </div>
           </a>
         </div>
       </motion.div>
     </motion.div>
-  )
+  );
 }
 
 /* ---------------- HERO SECTION ---------------- */
 function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-light-blue min-h-[92vh] flex items-center py-20 lg:py-0">
-
       {/* ── Background: subtle grid + large glow orbs ── */}
       <div className="absolute inset-0 pointer-events-none z-0 hero-grid-bg" />
 
@@ -436,8 +590,14 @@ function HeroSection() {
 
       {/* Floating decorative dots */}
       <div className="absolute top-1/4 left-[8%] hero-dot animate-float z-0 opacity-80" />
-      <div className="absolute top-2/3 left-[12%] hero-dot animate-float-delay z-0 opacity-50" style={{ width: 6, height: 6 }} />
-      <div className="absolute top-[15%] right-[30%] hero-dot animate-float-delay z-0 opacity-60" style={{ width: 7, height: 7 }} />
+      <div
+        className="absolute top-2/3 left-[12%] hero-dot animate-float-delay z-0 opacity-50"
+        style={{ width: 6, height: 6 }}
+      />
+      <div
+        className="absolute top-[15%] right-[30%] hero-dot animate-float-delay z-0 opacity-60"
+        style={{ width: 7, height: 7 }}
+      />
 
       {/* SVG line decoration */}
       <div className="absolute inset-0 pointer-events-none z-0 opacity-30">
@@ -450,10 +610,8 @@ function HeroSection() {
 
       {/* ── Main Layout ── */}
       <div className="relative z-10 mx-auto max-w-7xl w-full px-6 md:px-8 grid gap-10 lg:grid-cols-12 items-center lg:py-24">
-
         {/* ═══ LEFT COLUMN ═══ */}
         <div className="lg:col-span-6 xl:col-span-7 flex flex-col items-start text-left">
-
           {/* Pill badge */}
           <motion.div
             initial={{ opacity: 0, y: -16 }}
@@ -462,7 +620,10 @@ function HeroSection() {
             className="mb-6"
           >
             <span className="hero-tag inline-flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest text-dark-black">
-              <span className="hero-dot" style={{ width: 7, height: 7, flexShrink: 0 }} />
+              <span
+                className="hero-dot"
+                style={{ width: 7, height: 7, flexShrink: 0 }}
+              />
               Award-Winning Creative Agency
             </span>
           </motion.div>
@@ -474,19 +635,20 @@ function HeroSection() {
             transition={{ duration: 0.65, delay: 0.1 }}
             className="font-roboto-condensed text-[clamp(2.6rem,6.8vw,4.9rem)] font-black leading-[0.96] tracking-tight text-dark-black uppercase mb-6"
           >
-            We Build{' '}
+            We Build{" "}
             <span className="relative inline-block">
               <span className="hero-underline">Brands</span>
             </span>
             <br />
-            That{' '}
+            That{" "}
             <span
               className="animate-gradient-text"
               style={{
-                backgroundImage: 'linear-gradient(90deg, #0a0f1e, #3b82f6, #1d4ed8, #3b82f6, #0a0f1e)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                backgroundImage:
+                  "linear-gradient(90deg, #0a0f1e, #3b82f6, #1d4ed8, #3b82f6, #0a0f1e)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
             >
               Dominate
@@ -500,8 +662,8 @@ function HeroSection() {
             transition={{ duration: 0.6, delay: 0.25 }}
             className="max-w-lg text-lg font-medium leading-relaxed text-black-main/80 mb-10"
           >
-            We help brands grow through smart marketing powered by creativity and technology —
-            strategies built to scale, convert, and last.
+            We help brands grow through smart marketing powered by creativity
+            and technology — strategies built to scale, convert, and last.
           </motion.p>
 
           {/* CTA Row */}
@@ -516,13 +678,35 @@ function HeroSection() {
               href="#contact"
               className="primary-button-hover group flex items-center gap-3 rounded-full bg-dark-black px-7 py-4 text-white animate-pulse-glow"
             >
-              <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">Start a Project</span>
+              <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">
+                Start a Project
+              </span>
               <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-dark-black overflow-hidden">
-                <svg className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg
+                  className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
                 </svg>
-                <svg className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-dark-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg
+                  className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-dark-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
                 </svg>
               </div>
             </a>
@@ -532,9 +716,21 @@ function HeroSection() {
               href="#projects"
               className="group flex items-center gap-2 rounded-full border-2 border-border-blue/60 px-6 py-[14px] text-dark-black hover:bg-border-blue/10 transition-colors duration-300"
             >
-              <span className="font-roboto-condensed text-sm uppercase tracking-wider font-bold">View Our Work</span>
-              <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <span className="font-roboto-condensed text-sm uppercase tracking-wider font-bold">
+                View Our Work
+              </span>
+              <svg
+                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </a>
           </motion.div>
@@ -547,17 +743,21 @@ function HeroSection() {
             className="flex flex-wrap gap-4"
           >
             {[
-              { value: '250+', label: 'Projects Delivered' },
-              { value: '8+', label: 'Years of Experience' },
-              { value: '98%', label: 'Client Satisfaction' },
+              { value: "250+", label: "Projects Delivered" },
+              { value: "8+", label: "Years of Experience" },
+              { value: "98%", label: "Client Satisfaction" },
             ].map((stat, i) => (
               <div
                 key={i}
                 className="hero-stat-card px-5 py-4 flex flex-col min-w-[110px]"
                 style={{ animationDelay: `${i * 0.12}s` }}
               >
-                <span className="font-roboto-condensed text-2xl font-black text-dark-black leading-none">{stat.value}</span>
-                <span className="text-xs font-semibold text-deep-gray mt-1 leading-snug">{stat.label}</span>
+                <span className="font-roboto-condensed text-2xl font-black text-dark-black leading-none">
+                  {stat.value}
+                </span>
+                <span className="text-xs font-semibold text-deep-gray mt-1 leading-snug">
+                  {stat.label}
+                </span>
               </div>
             ))}
           </motion.div>
@@ -565,7 +765,6 @@ function HeroSection() {
 
         {/* ═══ RIGHT COLUMN ═══ */}
         <div className="lg:col-span-6 xl:col-span-5 relative flex justify-center items-center mt-8 lg:mt-0">
-
           {/* Large glow behind image */}
           <div className="absolute inset-[-10%] rounded-full hero-glow-orb animate-pulse-glow z-0 opacity-60" />
 
@@ -591,7 +790,12 @@ function HeroSection() {
           <motion.div
             initial={{ opacity: 0, scale: 0.6, rotate: -30 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 0.7, delay: 0.55, type: 'spring', stiffness: 160 }}
+            transition={{
+              duration: 0.7,
+              delay: 0.55,
+              type: "spring",
+              stiffness: 160,
+            }}
             className="absolute -left-6 top-6 z-20 h-28 w-28 animate-spin-slow drop-shadow-xl"
           >
             <img
@@ -605,21 +809,35 @@ function HeroSection() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.7, type: 'spring', stiffness: 120 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.7,
+              type: "spring",
+              stiffness: 120,
+            }}
             className="absolute -right-4 top-[18%] z-20 hero-stat-card px-4 py-3 animate-float-delay flex items-center gap-3"
           >
             <div className="flex -space-x-2">
               {[
-                '/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp',
-                '/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp',
-                '/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp',
+                "/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp",
+                "/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp",
+                "/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp",
               ].map((src, i) => (
-                <img key={i} src={src} alt="" className="h-8 w-8 rounded-full border-2 border-white object-cover" />
+                <img
+                  key={i}
+                  src={src}
+                  alt=""
+                  className="h-8 w-8 rounded-full border-2 border-white object-cover"
+                />
               ))}
             </div>
             <div>
-              <p className="text-xs font-black text-dark-black leading-none">+120 Happy</p>
-              <p className="text-[10px] font-semibold text-deep-gray mt-0.5">Clients Worldwide</p>
+              <p className="text-xs font-black text-dark-black leading-none">
+                +120 Happy
+              </p>
+              <p className="text-[10px] font-semibold text-deep-gray mt-0.5">
+                Clients Worldwide
+              </p>
             </div>
           </motion.div>
 
@@ -627,34 +845,51 @@ function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.8, type: 'spring' }}
+            transition={{ duration: 0.55, delay: 0.8, type: "spring" }}
             className="absolute -left-2 bottom-[14%] z-20 hero-stat-card px-4 py-3 animate-float flex items-center gap-3"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-5 w-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                className="h-5 w-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                />
               </svg>
             </div>
             <div>
-              <p className="text-xs font-black text-dark-black leading-none">3× Growth</p>
-              <p className="text-[10px] font-semibold text-deep-gray mt-0.5">Average ROI Boost</p>
+              <p className="text-xs font-black text-dark-black leading-none">
+                3× Growth
+              </p>
+              <p className="text-[10px] font-semibold text-deep-gray mt-0.5">
+                Average ROI Boost
+              </p>
             </div>
           </motion.div>
 
           {/* Decorative lime corner accent */}
           <div
             className="absolute -bottom-4 -right-4 z-0 w-32 h-32 rounded-3xl opacity-20"
-            style={{ background: 'linear-gradient(135deg, #3b82f6 0%, transparent 70%)' }}
+            style={{
+              background:
+                "linear-gradient(135deg, #3b82f6 0%, transparent 70%)",
+            }}
           />
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- MARQUEE SECTION ---------------- */
 function MarqueeSection() {
-  const words = ['Designed for growth', 'Built for impact']
+  const words = ["Designed for growth", "Built for impact"];
   return (
     <section className="bg-dark-black py-8 border-y-2 border-border-blue/20 overflow-hidden select-none">
       {/* Row 1 - Left to Right */}
@@ -664,9 +899,13 @@ function MarqueeSection() {
             words.map((word, wIdx) => (
               <div key={`m1-${i}-${wIdx}`} className="flex items-center gap-8">
                 <span>{word}</span>
-                <img src="/site-images/site-26-69b53497ca28dbd5887c06a1-vector-1-.svg" alt="star" className="h-6 w-6 text-primary" />
+                <img
+                  src="/site-images/site-26-69b53497ca28dbd5887c06a1-vector-1-.svg"
+                  alt="star"
+                  className="h-6 w-6 text-primary"
+                />
               </div>
-            ))
+            )),
           )}
         </div>
       </div>
@@ -676,7 +915,11 @@ function MarqueeSection() {
         <div className="animate-marquee-right flex gap-12 text-2xl md:text-3xl font-roboto-condensed font-black uppercase">
           {[...Array(12)].map((_, i) => (
             <div key={`m2-${i}`} className="flex items-center gap-8">
-              <span className={i % 2 === 0 ? 'text-white' : 'text-transparent stroke-text'}>
+              <span
+                className={
+                  i % 2 === 0 ? "text-white" : "text-transparent stroke-text"
+                }
+              >
                 Designed for growth
               </span>
               <span className="text-white/40">•</span>
@@ -690,29 +933,31 @@ function MarqueeSection() {
         `}</style>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- ABOUT STUDIO SECTION ---------------- */
 function AboutSection() {
   const avatars = [
-    '/site-images/site-03-699d265d8569f51df2d0f85f-group-17.webp',
-    '/site-images/site-04-699d26725de35b5d16022330-group-19.webp',
-    '/site-images/site-05-699d267f7af63905b9b9a11b-group-18-1-.webp',
-    '/site-images/site-06-699d26a119b49e6e3c693ab1-group-20.webp',
-  ]
+    "/site-images/site-03-699d265d8569f51df2d0f85f-group-17.webp",
+    "/site-images/site-04-699d26725de35b5d16022330-group-19.webp",
+    "/site-images/site-05-699d267f7af63905b9b9a11b-group-18-1-.webp",
+    "/site-images/site-06-699d26a119b49e6e3c693ab1-group-20.webp",
+  ];
 
   const stats = [
-    { value: '250+', label: 'Projects Done' },
-    { value: '120+', label: 'Happy Clients' },
-    { value: '8+',   label: 'Years Active' },
-    { value: '38+',  label: 'Awards Won' },
-  ]
+    { value: "250+", label: "Projects Done" },
+    { value: "120+", label: "Happy Clients" },
+    { value: "8+", label: "Years Active" },
+    { value: "38+", label: "Awards Won" },
+  ];
 
   return (
-    <section id="about" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 overflow-hidden">
+    <section
+      id="about"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 overflow-hidden"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
-
         {/* ── Section Label + Headline ── */}
         <div className="grid gap-6 lg:grid-cols-12 mb-16 items-end">
           <div className="lg:col-span-5">
@@ -728,7 +973,9 @@ function AboutSection() {
           </div>
           <div className="lg:col-span-7 flex flex-col justify-end gap-6">
             <p className="text-lg font-medium leading-relaxed text-black-main/75 max-w-xl">
-              We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. From bold brand identities to performance-driven campaigns — we build what lasts.
+              We are a cause-led digital marketing and brand agency dedicated to
+              helping businesses grow with purpose. From bold brand identities
+              to performance-driven campaigns — we build what lasts.
             </p>
             {/* Stats strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -741,8 +988,12 @@ function AboutSection() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="flex flex-col rounded-2xl border border-border-blue/40 bg-white px-4 py-4 text-left shadow-sm"
                 >
-                  <span className="font-roboto-condensed text-2xl font-black text-primary leading-none">{s.value}</span>
-                  <span className="text-xs font-semibold text-deep-gray mt-1">{s.label}</span>
+                  <span className="font-roboto-condensed text-2xl font-black text-primary leading-none">
+                    {s.value}
+                  </span>
+                  <span className="text-xs font-semibold text-deep-gray mt-1">
+                    {s.label}
+                  </span>
                 </motion.div>
               ))}
             </div>
@@ -751,7 +1002,6 @@ function AboutSection() {
 
         {/* ── Main Image + Content Grid ── */}
         <div className="grid gap-6 lg:grid-cols-12 items-stretch mt-4">
-
           {/* LEFT — tall portrait image stack */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -761,7 +1011,10 @@ function AboutSection() {
             className="lg:col-span-4 flex flex-col gap-6"
           >
             {/* Tall primary image */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 340 }}>
+            <div
+              className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg"
+              style={{ height: 340 }}
+            >
               <img
                 src="/site-images/brand1-generated-about.png"
                 alt="Brand1Solutions creative team collaborating in a modern studio"
@@ -771,19 +1024,36 @@ function AboutSection() {
               {/* Floating badge on image */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl bg-white/90 backdrop-blur-sm px-4 py-3 shadow-md">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-5 w-5 text-white">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    className="h-5 w-5 text-white"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-xs font-black text-dark-black leading-none">Since 2016</p>
-                  <p className="text-[10px] font-semibold text-deep-gray mt-0.5">Award-Winning Agency</p>
+                  <p className="text-xs font-black text-dark-black leading-none">
+                    Since 2016
+                  </p>
+                  <p className="text-[10px] font-semibold text-deep-gray mt-0.5">
+                    Award-Winning Agency
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Spinning badge + small square image */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 200 }}>
+            <div
+              className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg"
+              style={{ height: 200 }}
+            >
               <img
                 src="/site-images/site-07-699d2935a9d8d5ecf784d3c7-image-45.webp"
                 alt="Analytics"
@@ -809,7 +1079,10 @@ function AboutSection() {
             className="lg:col-span-5 flex flex-col gap-6"
           >
             {/* Main wide image */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 300 }}>
+            <div
+              className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg"
+              style={{ height: 300 }}
+            >
               <img
                 src="/site-images/site-27-69b8c388b330469916aa6e98-mask-group-2-optimi.webp"
                 alt="Digital marketing"
@@ -827,25 +1100,43 @@ function AboutSection() {
             <div className="flex-1 rounded-[32px] border border-border-blue/60 bg-bg-deep p-6 flex flex-col justify-between">
               <div className="flex items-start gap-4 mb-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-6 w-6 text-primary">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    className="h-6 w-6 text-primary"
+                  >
                     <circle cx="12" cy="12" r="10" />
-                    <path strokeLinecap="round" d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                    <path
+                      strokeLinecap="round"
+                      d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
+                    />
                   </svg>
                 </div>
                 <div>
                   <h3 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-tight">
                     Trusted Worldwide
                   </h3>
-                  <p className="text-sm text-deep-gray mt-1">Serving clients across 30+ countries</p>
+                  <p className="text-sm text-deep-gray mt-1">
+                    Serving clients across 30+ countries
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-3">
                   {avatars.map((img, i) => (
-                    <img key={i} src={img} alt="client" className="h-10 w-10 rounded-full border-2 border-white object-cover shadow" />
+                    <img
+                      key={i}
+                      src={img}
+                      alt="client"
+                      className="h-10 w-10 rounded-full border-2 border-white object-cover shadow"
+                    />
                   ))}
                 </div>
-                <span className="text-sm font-bold text-dark-black">+120 happy clients</span>
+                <span className="text-sm font-bold text-dark-black">
+                  +120 happy clients
+                </span>
               </div>
             </div>
           </motion.div>
@@ -859,7 +1150,10 @@ function AboutSection() {
             className="lg:col-span-3 flex flex-col gap-6"
           >
             {/* Top right image */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 220 }}>
+            <div
+              className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg"
+              style={{ height: 220 }}
+            >
               <img
                 src="/site-images/site-28-69b8c3a21236af6944d5e3f4-mask-group-3-optimi.webp"
                 alt="Strategy"
@@ -874,7 +1168,10 @@ function AboutSection() {
             </div>
 
             {/* Middle image */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg" style={{ height: 160 }}>
+            <div
+              className="relative rounded-[32px] overflow-hidden border border-border-blue/30 shadow-lg"
+              style={{ height: 160 }}
+            >
               <img
                 src="/site-images/site-29-69b8c45cd9ee14d78c6efa49-mask-group-2-optimi.webp"
                 alt="Content creation"
@@ -892,40 +1189,64 @@ function AboutSection() {
                 href="#contact"
                 className="primary-button-hover group mt-4 flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-white"
               >
-                <span className="font-roboto-condensed text-sm uppercase tracking-wider font-bold">Let's Talk</span>
+                <span className="font-roboto-condensed text-sm uppercase tracking-wider font-bold">
+                  Let's Talk
+                </span>
                 <div className="relative flex h-6 w-6 items-center justify-center rounded-full bg-white overflow-hidden">
-                  <svg className="btn-arrow-slide h-3 w-3 text-primary transition-transform duration-300 group-hover:translate-x-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    className="btn-arrow-slide h-3 w-3 text-primary transition-transform duration-300 group-hover:translate-x-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
-                  <svg className="absolute -left-5 h-3 w-3 text-primary transition-transform duration-300 group-hover:translate-x-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    className="absolute -left-5 h-3 w-3 text-primary transition-transform duration-300 group-hover:translate-x-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </div>
               </a>
             </div>
           </motion.div>
         </div>
-
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- SERVICES ACCORDION COMPONENT ---------------- */
 function ServicesSection() {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
+    const rect = e.currentTarget.getBoundingClientRect();
     setMousePos({
       x: e.clientX - rect.left - 120, // centers the floating image
       y: e.clientY - rect.top - 80,
-    })
-  }
+    });
+  };
 
   return (
-    <section id="services" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 relative">
+    <section
+      id="services"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 relative"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {/* Title */}
         <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
@@ -933,7 +1254,8 @@ function ServicesSection() {
             Services
           </h2>
           <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-            Comprehensive digital solutions tailored to elevate your brand and drive measurable results.
+            Comprehensive digital solutions tailored to elevate your brand and
+            drive measurable results.
           </p>
         </div>
 
@@ -944,7 +1266,7 @@ function ServicesSection() {
           onMouseLeave={() => setHoveredIdx(null)}
         >
           {servicesList.map((service, index) => {
-            const isHovered = hoveredIdx === index
+            const isHovered = hoveredIdx === index;
             return (
               <div
                 key={service.id}
@@ -975,8 +1297,11 @@ function ServicesSection() {
                 {/* Smooth Expand content */}
                 <motion.div
                   initial={false}
-                  animate={{ height: isHovered ? 'auto' : 0, opacity: isHovered ? 1 : 0 }}
-                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  animate={{
+                    height: isHovered ? "auto" : 0,
+                    opacity: isHovered ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="overflow-hidden px-4 md:px-20 text-left"
                 >
                   <p className="mt-4 text-black-main font-medium leading-relaxed max-w-xl">
@@ -996,7 +1321,7 @@ function ServicesSection() {
                   </div>
                 </motion.div>
               </div>
-            )
+            );
           })}
 
           {/* Floating hover follow image cursor */}
@@ -1006,20 +1331,20 @@ function ServicesSection() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: 'spring', damping: 20, stiffness: 150 }}
+                transition={{ type: "spring", damping: 20, stiffness: 150 }}
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   left: mousePos.x,
                   top: mousePos.y,
-                  pointerEvents: 'none',
+                  pointerEvents: "none",
                   zIndex: 30,
                 }}
-                className="hidden lg:block h-40 w-60 border-2 border-border-blue rounded-2xl overflow-hidden shadow-2xl bg-bg-deep"
+                className="hidden lg:block w-72 aspect-[4/3] border-2 border-border-blue rounded-2xl overflow-hidden shadow-2xl bg-bg-deep"
               >
                 <img
                   src={servicesList[hoveredIdx].image}
                   alt="Service preview"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover object-center"
                 />
               </motion.div>
             )}
@@ -1027,69 +1352,149 @@ function ServicesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- PROJECTS SECTION ---------------- */
-function ProjectsSection({ activeProject, setActiveProject }: { activeProject: number; setActiveProject: (i: number) => void }) {
+function ProjectsSection({
+  activeProject,
+  setActiveProject,
+}: {
+  activeProject: number;
+  setActiveProject: (i: number) => void;
+}) {
+  const currentProject = projectsList[activeProject];
+
   return (
-    <section id="projects" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 overflow-hidden">
+    <section
+      id="projects"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20 overflow-hidden relative"
+    >
+      <div className="absolute -top-32 right-[-120px] h-[420px] w-[420px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-[-160px] h-[340px] w-[340px] rounded-full bg-border-blue/20 blur-3xl pointer-events-none" />
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {/* Header Title */}
-        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
-          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
-            Our Projects
-          </h2>
-          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-            We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. Solutions designed to scale.
-          </p>
+        <div className="grid gap-8 lg:grid-cols-12 mb-16 items-end relative z-10">
+          <div className="lg:col-span-5 text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border-blue/50 bg-bg-deep px-4 py-2 text-xs font-black uppercase tracking-widest text-primary mb-5">
+              <span className="h-2 w-2 rounded-full bg-primary" />
+              Case Studies
+            </span>
+            <h2 className="font-roboto-condensed text-3xl md:text-4xl lg:text-5xl font-black uppercase text-dark-black tracking-tight leading-[0.96]">
+              Our Projects
+            </h2>
+          </div>
+          <div className="lg:col-span-7 text-left lg:text-right">
+            <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray max-w-2xl lg:ml-auto">
+              A curated look at how we shape strategy, design, and digital
+              systems into growth-focused brand experiences.
+            </p>
+          </div>
         </div>
 
-        {/* Dynamic Width Accordion Cards Grid */}
-        <div className="flex flex-col lg:flex-row gap-6 mt-12 min-h-[500px]">
-          {projectsList.map((project, index) => {
-            const isActive = activeProject === index
-            return (
-              <div
-                key={project.id}
-                onMouseEnter={() => setActiveProject(index)}
-                className={`relative flex flex-col justify-between rounded-[40px] border border-border-blue/60 bg-bg-deep p-8 md:p-10 cursor-pointer overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? 'w-full lg:flex-[2.5]' : 'w-full lg:flex-[1]'}`}
-              >
-                {/* Text content details */}
-                <div className="relative z-10 flex flex-col items-start text-left">
-                  <div className="flex items-center gap-4 mb-6">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-border-blue/20 border border-border-blue text-sm font-bold text-dark-black font-roboto-condensed">
-                      {project.num}
-                    </span>
-                    <h3 className="font-roboto-condensed text-2xl md:text-3xl font-black uppercase text-dark-black">
-                      {project.title}
-                    </h3>
-                  </div>
+        <div className="grid gap-8 lg:grid-cols-12 relative z-10">
+          {/* Featured active project */}
+          <motion.article
+            key={currentProject.id}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-8 relative min-h-[560px] overflow-hidden rounded-[44px] border border-border-blue/60 bg-dark-black text-white shadow-2xl shadow-primary/10"
+          >
+            <img
+              src={currentProject.image}
+              alt={currentProject.title}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/45 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.35),transparent_34%)]" />
 
-                  {/* Description only shown or opacity transitions based on active */}
-                  <div className={`transition-all duration-500 overflow-hidden ${isActive ? 'max-h-40 opacity-100' : 'max-h-0 lg:max-h-0 opacity-0'}`}>
-                    <p className="text-black-main font-medium leading-relaxed max-w-md">
-                      {project.copy}
-                    </p>
-                  </div>
+            <div className="relative z-10 flex min-h-[560px] flex-col justify-between p-7 md:p-10">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <span className="rounded-full border border-white/20 bg-white/15 px-4 py-2 text-xs font-black uppercase tracking-widest backdrop-blur-md">
+                  {currentProject.category}
+                </span>
+                <span className="font-roboto-condensed text-5xl font-black text-white/30">
+                  {currentProject.num}
+                </span>
+              </div>
+
+              <div className="max-w-2xl text-left">
+                <div className="mb-5 inline-flex rounded-full bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20">
+                  {currentProject.result}
                 </div>
-
-                {/* Project Image Overlay inside the container */}
-                <div className="relative mt-8 h-64 lg:h-72 w-full overflow-hidden rounded-3xl border border-border-blue/30">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-dark-black/5" />
+                <h3 className="font-roboto-condensed text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.92] tracking-tight">
+                  {currentProject.title}
+                </h3>
+                <p className="mt-5 max-w-xl text-base md:text-lg font-medium leading-relaxed text-white/78">
+                  {currentProject.copy}
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  {currentProject.scope.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white/90 backdrop-blur-md"
+                    >
+                      {item}
+                    </span>
+                  ))}
                 </div>
               </div>
-            )
-          })}
+            </div>
+          </motion.article>
+
+          {/* Project selector rail */}
+          <div className="lg:col-span-4 grid gap-4">
+            {projectsList.map((project, index) => {
+              const isActive = activeProject === index;
+              return (
+                <button
+                  key={project.id}
+                  type="button"
+                  onClick={() => setActiveProject(index)}
+                  onMouseEnter={() => setActiveProject(index)}
+                  className={`group relative overflow-hidden rounded-[32px] border p-5 text-left transition-all duration-500 ${
+                    isActive
+                      ? "border-primary bg-white shadow-xl shadow-primary/10"
+                      : "border-border-blue/60 bg-bg-deep hover:bg-white"
+                  }`}
+                >
+                  <div className="flex gap-4">
+                    <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl border border-border-blue/30 bg-white">
+                      <img
+                        src={project.image}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span
+                          className={`font-roboto-condensed text-sm font-black ${isActive ? "text-primary" : "text-deep-gray"}`}
+                        >
+                          {project.num}
+                        </span>
+                        <span className="h-px w-8 bg-border-blue" />
+                      </div>
+                      <h4 className="font-roboto-condensed text-xl font-black uppercase leading-none text-dark-black">
+                        {project.title}
+                      </h4>
+                      <p className="mt-3 line-clamp-2 text-sm font-medium leading-relaxed text-deep-gray">
+                        {project.result}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className={`absolute bottom-0 left-0 h-1 bg-primary transition-all duration-500 ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}
+                  />
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- GIANT STAT MARQUEE ---------------- */
@@ -1111,65 +1516,98 @@ function StatsMarquee() {
       {/* Floating stat panel overlay wrapper */}
       <div className="mx-auto max-w-7xl px-6 md:px-8 mt-12 flex flex-col md:flex-row items-center justify-between gap-8 z-10 relative">
         <div className="flex items-center gap-6">
-          <img src="/site-images/site-14-699e74dbb1e20032c584943b-star-1.svg" alt="Giant Star" className="h-16 w-16 text-dark-black" />
+          <img
+            src="/site-images/site-14-699e74dbb1e20032c584943b-star-1.svg"
+            alt="Giant Star"
+            className="h-16 w-16 text-dark-black"
+          />
           <p className="font-roboto-condensed text-xl font-bold uppercase text-dark-black tracking-wider text-left">
-            Cause-Led Brand Agency <br />Building Purpose
+            Cause-Led Brand Agency <br />
+            Building Purpose
           </p>
         </div>
 
         {/* Stats overlay ticket container */}
         <div className="flex flex-wrap justify-center gap-6 bg-white border-2 border-border-blue rounded-[30px] p-6 shadow-lg">
           <div className="flex items-center gap-4 border-r border-border-blue/40 pr-6">
-            <img src="/site-images/site-18-69a2646e786d6e61bdb5e677-14k.svg" alt="14k badge" className="h-12 w-auto" />
+            <img
+              src="/site-images/site-18-69a2646e786d6e61bdb5e677-14k.svg"
+              alt="14k badge"
+              className="h-12 w-auto"
+            />
             <div className="text-left">
-              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">14K</h4>
-              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">Completed Projects</p>
+              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">
+                14K
+              </h4>
+              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">
+                Completed Projects
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4 pl-2">
-            <img src="/site-images/site-19-69a26798fbf985a30a5da8b3-38-3-.svg" alt="38 award badge" className="h-12 w-auto" />
+            <img
+              src="/site-images/site-19-69a26798fbf985a30a5da8b3-38-3-.svg"
+              alt="38 award badge"
+              className="h-12 w-auto"
+            />
             <div className="text-left">
-              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">38+</h4>
-              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">Top Agency Awards</p>
+              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">
+                38+
+              </h4>
+              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">
+                Top Agency Awards
+              </p>
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- PROCESS SECTION ---------------- */
-function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; setActiveStep: (i: number) => void }) {
+function ProcessSection({
+  activeStep,
+  setActiveStep,
+}: {
+  activeStep: number;
+  setActiveStep: (i: number) => void;
+}) {
   const steps = [
     {
-      num: '01',
-      title: 'Discovery',
-      copy: 'We dive deep into your brand, goals, and target audience to build a solid foundation.',
-      image: '/site-images/site-17-699fcf647fca9ec7764151b7-simplification-3-.webp',
+      num: "01",
+      title: "Discovery",
+      copy: "We dive deep into your brand, goals, and target audience to build a solid foundation.",
+      image:
+        "/site-images/site-17-699fcf647fca9ec7764151b7-simplification-3-.webp",
     },
     {
-      num: '02',
-      title: 'Strategy',
-      copy: 'We craft a tailored digital strategy aligned with your business objectives.',
-      image: '/site-images/site-16-699fcf63a70c9af4c0143b31-simplification-4-.webp',
+      num: "02",
+      title: "Strategy",
+      copy: "We craft a tailored digital strategy aligned with your business objectives.",
+      image:
+        "/site-images/site-16-699fcf63a70c9af4c0143b31-simplification-4-.webp",
     },
     {
-      num: '03',
-      title: 'Design & Build',
-      copy: 'Our team brings the vision to life with pixel-perfect design and clean code.',
-      image: '/site-images/site-15-699fcf6335fca42deeee7c84-simplification-5-.webp',
+      num: "03",
+      title: "Design & Build",
+      copy: "Our team brings the vision to life with pixel-perfect design and clean code.",
+      image:
+        "/site-images/site-15-699fcf6335fca42deeee7c84-simplification-5-.webp",
     },
     {
-      num: '04',
-      title: 'Launch & Grow',
-      copy: 'We launch your project and provide ongoing support to drive real results.',
-      image: '/site-images/brand1-service-seo-growth.png',
+      num: "04",
+      title: "Launch & Grow",
+      copy: "We launch your project and provide ongoing support to drive real results.",
+      image: "/site-images/brand1-service-seo-growth.png",
     },
-  ]
+  ];
 
   return (
-    <section id="process" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20">
+    <section
+      id="process"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-12 items-start">
           {/* Title Left */}
@@ -1178,7 +1616,8 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
               How We Work
             </h2>
             <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-              A focused process that moves from discovery to strategy, design, launch, and measurable growth.
+              A focused process that moves from discovery to strategy, design,
+              launch, and measurable growth.
             </p>
           </div>
 
@@ -1187,11 +1626,14 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
             {/* SVG Connector step line */}
             <div className="md:col-span-2 hidden md:flex flex-col items-center relative py-4">
               {steps.map((_, i) => (
-                <div key={`ind-${i}`} className="flex flex-col items-center relative h-36">
+                <div
+                  key={`ind-${i}`}
+                  className="flex flex-col items-center relative h-36"
+                >
                   {/* Step ball circle */}
                   <button
                     onClick={() => setActiveStep(i)}
-                    className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 font-bold ${activeStep === i ? 'bg-primary border-primary text-white scale-110 shadow-lg' : 'bg-white border-border-blue text-deep-gray'}`}
+                    className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 font-bold ${activeStep === i ? "bg-primary border-primary text-white scale-110 shadow-lg" : "bg-white border-border-blue text-deep-gray"}`}
                   >
                     {i + 1}
                   </button>
@@ -1210,17 +1652,21 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
             {/* Slider cards box */}
             <div className="md:col-span-10 flex flex-col gap-6">
               {steps.map((step, idx) => {
-                const isActive = activeStep === idx
+                const isActive = activeStep === idx;
                 return (
                   <div
                     key={step.num}
                     onClick={() => setActiveStep(idx)}
-                    className={`rounded-[40px] border border-border-blue/60 p-8 text-left transition-all duration-500 cursor-pointer ${isActive ? 'bg-white shadow-xl translate-x-2' : 'bg-bg-deep/40 opacity-70'}`}
+                    className={`rounded-[40px] border border-border-blue/60 p-8 text-left transition-all duration-500 cursor-pointer ${isActive ? "bg-white shadow-xl translate-x-2" : "bg-bg-deep/40 opacity-70"}`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-bg-deep border border-border-blue flex items-center justify-center shrink-0">
-                          <img src={step.image} alt={step.title} className="h-7 w-7 object-contain" />
+                          <img
+                            src={step.image}
+                            alt={step.title}
+                            className="h-7 w-7 object-contain"
+                          />
                         </div>
                         <div>
                           <span className="font-roboto-condensed text-xs font-black uppercase text-deep-gray tracking-wider">
@@ -1236,20 +1682,23 @@ function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; set
                       {step.copy}
                     </p>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- TEAM SECTION ---------------- */
 function TeamSection() {
   return (
-    <section id="team" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20">
+    <section
+      id="team"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {/* Title */}
         <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
@@ -1257,14 +1706,18 @@ function TeamSection() {
             Our Team Members
           </h2>
           <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-            A seamless journey that transforms ideas into impactful solutions through creativity, strategy, and performance.
+            A seamless journey that transforms ideas into impactful solutions
+            through creativity, strategy, and performance.
           </p>
         </div>
 
         {/* Team Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12">
           {teamList.map((member) => (
-            <div key={member.name} className="group relative flex flex-col rounded-[32px] border border-border-blue bg-bg-deep p-4 overflow-hidden">
+            <div
+              key={member.name}
+              className="group relative flex flex-col rounded-[32px] border border-border-blue bg-bg-deep p-4 overflow-hidden"
+            >
               {/* Photo Box */}
               <div className="relative h-80 w-full overflow-hidden rounded-[24px] border border-border-blue/30 bg-white">
                 <img
@@ -1275,10 +1728,30 @@ function TeamSection() {
 
                 {/* Slide Up Socials Drawer overlay */}
                 <div className="absolute inset-x-0 bottom-0 translate-y-full bg-dark-black/80 backdrop-blur-sm p-4 transition-transform duration-300 group-hover:translate-y-0 flex justify-center gap-4">
-                  <a href={member.social.facebook} className="text-white hover:text-primary transition-colors">FB</a>
-                  <a href={member.social.instagram} className="text-white hover:text-primary transition-colors">IG</a>
-                  <a href={member.social.twitter} className="text-white hover:text-primary transition-colors">TW</a>
-                  <a href={member.social.linkedin} className="text-white hover:text-primary transition-colors">LN</a>
+                  <a
+                    href={member.social.facebook}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    FB
+                  </a>
+                  <a
+                    href={member.social.instagram}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    IG
+                  </a>
+                  <a
+                    href={member.social.twitter}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    TW
+                  </a>
+                  <a
+                    href={member.social.linkedin}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    LN
+                  </a>
                 </div>
               </div>
 
@@ -1296,12 +1769,12 @@ function TeamSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- TESTIMONIALS COMPONENT ---------------- */
 function TestimonialsSection() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   return (
     <section className="py-20 lg:py-32 bg-bg-deep border-b border-border-blue/20 overflow-hidden">
@@ -1388,14 +1861,24 @@ function TestimonialsSection() {
             {/* Pagination Controls */}
             <div className="flex justify-end gap-3 mt-8">
               <button
-                onClick={() => setActiveTestimonial((prev) => (prev - 1 + testimonialsList.length) % testimonialsList.length)}
+                onClick={() =>
+                  setActiveTestimonial(
+                    (prev) =>
+                      (prev - 1 + testimonialsList.length) %
+                      testimonialsList.length,
+                  )
+                }
                 className="h-12 w-12 rounded-full border border-border-blue flex items-center justify-center hover:bg-border-blue/10 transition-colors"
                 aria-label="Previous Testimonial"
               >
                 ✕
               </button>
               <button
-                onClick={() => setActiveTestimonial((prev) => (prev + 1) % testimonialsList.length)}
+                onClick={() =>
+                  setActiveTestimonial(
+                    (prev) => (prev + 1) % testimonialsList.length,
+                  )
+                }
                 className="h-12 w-12 rounded-full border border-border-green bg-dark-black flex items-center justify-center hover:bg-dark-black/90 transition-colors"
                 aria-label="Next Testimonial"
               >
@@ -1410,7 +1893,7 @@ function TestimonialsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- PARTNERS SECTION (3D ROTATION) ---------------- */
@@ -1429,15 +1912,26 @@ function PartnersSection() {
         {/* 3D Flip Card grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {partnersList.map((partner, index) => (
-            <div key={`partner-${index}`} className="logo-flip-card group h-32 w-full cursor-pointer relative">
+            <div
+              key={`partner-${index}`}
+              className="logo-flip-card group h-32 w-full cursor-pointer relative"
+            >
               <div className="logo-flip-inner absolute inset-0 w-full h-full duration-500 rounded-3xl border border-border-blue/60 bg-bg-deep">
                 {/* Front logo */}
                 <div className="logo-flip-front absolute inset-0 w-full h-full flex items-center justify-center p-4">
-                  <img src={partner.front} alt="Brand logo" className="max-h-8 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <img
+                    src={partner.front}
+                    alt="Brand logo"
+                    className="max-h-8 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                  />
                 </div>
                 {/* Back logo */}
                 <div className="logo-flip-back absolute inset-0 w-full h-full flex items-center justify-center p-4 bg-white rounded-3xl">
-                  <img src={partner.back} alt="Brand logo inverted" className="max-h-8 w-auto object-contain opacity-90" />
+                  <img
+                    src={partner.back}
+                    alt="Brand logo inverted"
+                    className="max-h-8 w-auto object-contain opacity-90"
+                  />
                 </div>
               </div>
             </div>
@@ -1445,15 +1939,18 @@ function PartnersSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- FAQ ACCORDION COMPONENT ---------------- */
 function FAQSection() {
-  const [openIdx, setOpenIdx] = useState<number | null>(0)
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20">
+    <section
+      id="faq"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-12 items-start">
           {/* Left Title details */}
@@ -1462,14 +1959,15 @@ function FAQSection() {
               Frequently asked questions
             </h2>
             <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-              Find clear and transparent answers to the most common questions about our services, process, and way of working.
+              Find clear and transparent answers to the most common questions
+              about our services, process, and way of working.
             </p>
           </div>
 
           {/* Accordion Lists Box */}
           <div className="lg:col-span-8 flex flex-col gap-4">
             {faqsList.map((faq, idx) => {
-              const isOpen = openIdx === idx
+              const isOpen = openIdx === idx;
               return (
                 <div
                   key={idx}
@@ -1483,13 +1981,16 @@ function FAQSection() {
                       {faq.question}
                     </span>
                     <div className="h-8 w-8 rounded-full border border-border-blue/60 flex items-center justify-center shrink-0 bg-bg-deep text-dark-black font-black transition-transform duration-300">
-                      {isOpen ? '✕' : '+'}
+                      {isOpen ? "✕" : "+"}
                     </div>
                   </button>
 
                   <motion.div
                     initial={false}
-                    animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                    animate={{
+                      height: isOpen ? "auto" : 0,
+                      opacity: isOpen ? 1 : 0,
+                    }}
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden px-6"
                   >
@@ -1498,86 +1999,89 @@ function FAQSection() {
                     </p>
                   </motion.div>
                 </div>
-              )
+              );
             })}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ---------------- BLOGS SECTION ---------------- */
-function BlogsSection() {
-  return (
-    <section id="blogs" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20">
-      <div className="mx-auto max-w-7xl px-6 md:px-8">
-        {/* Title */}
-        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
-          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
-            The latest blogs & trends
-          </h2>
-          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
-            We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. We are a cause-led digital marketing.
-          </p>
-        </div>
+// function BlogsSection() {
+//   return (
+//     <section id="blogs" className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20">
+//       <div className="mx-auto max-w-7xl px-6 md:px-8">
+//         {/* Title */}
+//         <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+//           <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+//             The latest blogs & trends
+//           </h2>
+//           <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+//             We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. We are a cause-led digital marketing.
+//           </p>
+//         </div>
 
-        {/* Blogs cards grid */}
-        <div className="grid gap-8 md:grid-cols-3 mt-12">
-          {blogsList.map((blog, idx) => (
-            <article key={idx} className="group flex flex-col justify-between rounded-[40px] border border-border-blue bg-bg-deep p-6 relative overflow-hidden text-left cursor-pointer">
-              <div>
-                {/* Author Info */}
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-xs font-black uppercase text-deep-gray tracking-wider">
-                    {blog.author}
-                  </span>
-                  <span className="text-xs font-bold text-deep-gray">
-                    {blog.date}
-                  </span>
-                </div>
+//         {/* Blogs cards grid */}
+//         <div className="grid gap-8 md:grid-cols-3 mt-12">
+//           {blogsList.map((blog, idx) => (
+//             <article key={idx} className="group flex flex-col justify-between rounded-[40px] border border-border-blue bg-bg-deep p-6 relative overflow-hidden text-left cursor-pointer">
+//               <div>
+//                 {/* Author Info */}
+//                 <div className="flex items-center justify-between mb-6">
+//                   <span className="text-xs font-black uppercase text-deep-gray tracking-wider">
+//                     {blog.author}
+//                   </span>
+//                   <span className="text-xs font-bold text-deep-gray">
+//                     {blog.date}
+//                   </span>
+//                 </div>
 
-                {/* Category chip */}
-                <div className="mb-6">
-                  <span className="inline-block rounded-full bg-white border border-border-blue px-4 py-1 text-xs font-bold uppercase tracking-wider text-dark-black">
-                    {blog.category}
-                  </span>
-                </div>
+//                 {/* Category chip */}
+//                 <div className="mb-6">
+//                   <span className="inline-block rounded-full bg-white border border-border-blue px-4 py-1 text-xs font-bold uppercase tracking-wider text-dark-black">
+//                     {blog.category}
+//                   </span>
+//                 </div>
 
-                {/* Thumbnail Image */}
-                <div className="h-48 w-full overflow-hidden rounded-2xl border border-border-blue/20 bg-white mb-6">
-                  <img
-                    src={blog.image}
-                    alt={blog.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
+//                 {/* Thumbnail Image */}
+//                 <div className="h-48 w-full overflow-hidden rounded-2xl border border-border-blue/20 bg-white mb-6">
+//                   <img
+//                     src={blog.image}
+//                     alt={blog.title}
+//                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+//                   />
+//                 </div>
 
-                {/* Article Header title */}
-                <h3 className="font-roboto-condensed text-xl md:text-2xl font-black uppercase text-dark-black mb-4 group-hover:text-primary transition-colors">
-                  {blog.title}
-                </h3>
-              </div>
+//                 {/* Article Header title */}
+//                 <h3 className="font-roboto-condensed text-xl md:text-2xl font-black uppercase text-dark-black mb-4 group-hover:text-primary transition-colors">
+//                   {blog.title}
+//                 </h3>
+//               </div>
 
-              <div>
-                <p className="text-sm font-medium leading-relaxed text-black-main mt-4">
-                  {blog.excerpt}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
+//               <div>
+//                 <p className="text-sm font-medium leading-relaxed text-black-main mt-4">
+//                   {blog.excerpt}
+//                 </p>
+//               </div>
+//             </article>
+//           ))}
+//         </div>
+//       </div>
+//     </section>
+//   )
+// }
 
 /* ---------------- FOOTER SECTION ---------------- */
 function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="bg-light-blue pt-20 relative overflow-hidden">
+    <footer
+      id="contact"
+      className="bg-light-blue pt-20 relative overflow-hidden"
+    >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-12 items-start pb-16">
           {/* Newsletter Box */}
@@ -1586,7 +2090,10 @@ function Footer() {
               Subscribe to our newsletter
             </h4>
 
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="flex flex-col gap-3"
+            >
               <input
                 type="email"
                 placeholder="Enter Your Email..."
@@ -1609,11 +2116,36 @@ function Footer() {
                 Menus
               </h5>
               <div className="flex flex-col gap-3 font-semibold text-deep-gray">
-                <a href="#about" className="hover:text-dark-black transition-colors">Home</a>
-                <a href="#about" className="hover:text-dark-black transition-colors">About</a>
-                <a href="#services" className="hover:text-dark-black transition-colors">Service</a>
-                <a href="#projects" className="hover:text-dark-black transition-colors">Projects</a>
-                <a href="#faq" className="hover:text-dark-black transition-colors">FAQ</a>
+                <a
+                  href="#about"
+                  className="hover:text-dark-black transition-colors"
+                >
+                  Home
+                </a>
+                <a
+                  href="#about"
+                  className="hover:text-dark-black transition-colors"
+                >
+                  About
+                </a>
+                <a
+                  href="#services"
+                  className="hover:text-dark-black transition-colors"
+                >
+                  Service
+                </a>
+                <a
+                  href="#projects"
+                  className="hover:text-dark-black transition-colors"
+                >
+                  Projects
+                </a>
+                <a
+                  href="#faq"
+                  className="hover:text-dark-black transition-colors"
+                >
+                  FAQ
+                </a>
               </div>
             </div>
 
@@ -1622,11 +2154,21 @@ function Footer() {
                 Pages
               </h5>
               <div className="flex flex-col gap-3 font-semibold text-deep-gray">
-                <a href="#" className="hover:text-dark-black transition-colors">Style Guide</a>
-                <a href="#" className="hover:text-dark-black transition-colors">License</a>
-                <a href="#" className="hover:text-dark-black transition-colors">Changelog</a>
-                <a href="#" className="hover:text-dark-black transition-colors">404 Page</a>
-                <a href="#" className="hover:text-dark-black transition-colors">Password</a>
+                <a href="#" className="hover:text-dark-black transition-colors">
+                  Style Guide
+                </a>
+                <a href="#" className="hover:text-dark-black transition-colors">
+                  License
+                </a>
+                <a href="#" className="hover:text-dark-black transition-colors">
+                  Changelog
+                </a>
+                <a href="#" className="hover:text-dark-black transition-colors">
+                  404 Page
+                </a>
+                <a href="#" className="hover:text-dark-black transition-colors">
+                  Password
+                </a>
               </div>
             </div>
 
@@ -1635,11 +2177,15 @@ function Footer() {
                 Contact
               </h5>
               <div className="flex flex-col gap-4 text-deep-gray">
-                <a href="mailto:contact@brand1solution.com" className="font-bold text-dark-black hover:underline transition-all">
+                <a
+                  href="mailto:contact@brand1solution.com"
+                  className="font-bold text-dark-black hover:underline transition-all"
+                >
                   contact@brand1solution.com
                 </a>
                 <p className="text-sm font-medium leading-relaxed">
-                  1901 Thornridge Cir. <br />Shiloh, Hawaii 81063
+                  1901 Thornridge Cir. <br />
+                  Shiloh, Hawaii 81063
                 </p>
               </div>
             </div>
@@ -1654,14 +2200,30 @@ function Footer() {
         {/* Footer Sub-links and copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-12 text-sm font-bold text-deep-gray uppercase tracking-wider relative z-10">
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-dark-black transition-colors">Facebook</a>
-            <a href="#" className="hover:text-dark-black transition-colors">Instagram</a>
-            <a href="#" className="hover:text-dark-black transition-colors">Twitter</a>
-            <a href="#" className="hover:text-dark-black transition-colors">Linkedin</a>
+            <a href="#" className="hover:text-dark-black transition-colors">
+              Facebook
+            </a>
+            <a href="#" className="hover:text-dark-black transition-colors">
+              Instagram
+            </a>
+            <a href="#" className="hover:text-dark-black transition-colors">
+              Twitter
+            </a>
+            <a href="#" className="hover:text-dark-black transition-colors">
+              Linkedin
+            </a>
           </div>
 
           <p className="normal-case font-medium">
-            © {currentYear} Designed by <a href="#" className="hover:text-dark-black font-semibold">Olynex</a>. Powered by <a href="#" className="hover:text-dark-black font-semibold">Webflow</a> & React.
+            © {currentYear} Designed by{" "}
+            <a href="#" className="hover:text-dark-black font-semibold">
+              Olynex
+            </a>
+            . Powered by{" "}
+            <a href="#" className="hover:text-dark-black font-semibold">
+              Webflow
+            </a>{" "}
+            & React.
           </p>
         </div>
 
@@ -1673,9 +2235,7 @@ function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
 
-export default App
-
-
+export default App;
