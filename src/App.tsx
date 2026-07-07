@@ -1,539 +1,1350 @@
-import { AnimatePresence, motion, useInView, useMotionValue, useSpring } from 'framer-motion'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Lenis from 'lenis'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import agencyHero from './assets/agency-hero.png'
-import globalStudio from './assets/global-studio.png'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 
-gsap.registerPlugin(ScrollTrigger)
-
-type Theme = 'light' | 'dark'
+type MenuOpenState = boolean
 
 type Service = {
+  id: string
   title: string
-  eyebrow: string
   copy: string
+  tags: string[]
+  image: string
 }
 
-const navItems = ['about', 'services', 'work', 'pricing', 'faq', 'contact'] as const
+type Project = {
+  id: string
+  num: string
+  title: string
+  copy: string
+  image: string
+}
 
-const services: Service[] = [
+type TeamMember = {
+  name: string
+  role: string
+  image: string
+  social: {
+    facebook: string
+    instagram: string
+    twitter: string
+    linkedin: string
+  }
+}
+
+type Testimonial = {
+  quote: string
+  author: string
+  role: string
+  avatar: string
+  logo: string
+}
+
+type FAQItem = {
+  question: string
+  answer: string
+}
+
+type BlogItem = {
+  author: string
+  date: string
+  category: string
+  title: string
+  excerpt: string
+  image: string
+}
+
+const servicesList: Service[] = [
   {
-    title: 'Experience Design',
-    eyebrow: 'UX / UI',
-    copy: 'Premium interfaces, design systems, prototypes, and product flows that make users trust the brand faster.',
+    id: '01',
+    title: 'Digital Marketing',
+    copy: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow and expand their market reach.',
+    tags: ['UI/UX Design', 'Strategy & Planning', 'Pitchdeck'],
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c576fa806721378754b4_Mask%20group%20(3)_optimized.webp',
   },
   {
-    title: 'Web Engineering',
-    eyebrow: 'React / Vite',
-    copy: 'Fast marketing sites, dashboards, portals, and conversion pages built with clean frontend architecture.',
+    id: '02',
+    title: 'Brand Strategy & Identity',
+    copy: 'Crafting unique visual stories, distinct positioning, and cohesive style guidelines that make your brand stand out.',
+    tags: ['Positioning', 'Visual Guidelines', 'Logo Design'],
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c5846379874173b121dc_Mask%20group%20(4)_optimized.webp',
   },
   {
-    title: 'Growth Systems',
-    eyebrow: 'SEO / CRO',
-    copy: 'Search visibility, content structure, analytics, and conversion experiments designed around measurable lift.',
+    id: '03',
+    title: 'Social Media Marketing',
+    copy: 'Engage with target audiences across modern channels through smart campaign plans, community building, and analysis.',
+    tags: ['Campaign Planning', 'Community Growth', 'Analytics'],
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c5bbb44546c10a509311_Mask%20group%20(5)_optimized.webp',
   },
   {
-    title: 'Commerce Builds',
-    eyebrow: 'Shopify / Custom',
-    copy: 'Elegant storefronts with product storytelling, secure checkout, performance, and post-launch optimization.',
+    id: '04',
+    title: 'Content Creation',
+    copy: 'Premium copywriting, visual assets, photography layouts, and multimedia experiences created around real user stories.',
+    tags: ['Copywriting', 'Graphic Design', 'Photography'],
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c5c816d94397f9e969d5_Mask%20group%20(6)_optimized.webp',
   },
 ]
 
-const portfolio = [
-  ['Luma Finance', 'Fintech dashboard with real-time insight layers', 'Product Strategy'],
-  ['Aster Studio', 'A cinematic brand site for a creative production team', 'Brand Web'],
-  ['Northline Goods', 'Conversion-led e-commerce with editorial product pages', 'Commerce'],
+const projectsList: Project[] = [
+  {
+    id: '01',
+    num: '01',
+    title: 'Elevare Digital Marketing',
+    copy: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c663e1748181e8dfef98_Mask%20group%20(6)_optimized.webp',
+  },
+  {
+    id: '02',
+    num: '02',
+    title: 'StratEdge Marketing',
+    copy: 'Driving traffic, generating leads, and turning random clicks into long-term loyal brand customers.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c7181b0c19661b2e9419_Mask%20group%20(5)_optimized.webp',
+  },
+  {
+    id: '03',
+    num: '03',
+    title: 'Momentum Partners',
+    copy: 'Transforming brands with smart positioning strategy, compelling storytelling layouts, and measurable organic growth.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c724d8f8deb69327931d_Mask%20group%20(7)_optimized.webp',
+  },
 ]
 
-const pricing = [
-  ['Launch', '$2.8k+', 'Best for a premium brand site refresh', ['Strategy sprint', '5 core sections', 'Responsive build', 'Launch QA']],
-  ['Scale', '$6.5k+', 'Best for full websites and growth systems', ['UX direction', '8-12 sections', 'CMS-ready structure', 'SEO foundation']],
-  ['Signature', 'Custom', 'Best for ambitious products and campaigns', ['Creative direction', 'Motion system', 'Custom interactions', 'Growth roadmap']],
+const teamList: TeamMember[] = [
+  {
+    name: 'Theresa Webb',
+    role: 'Marketing Specialist',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a5069b00fa7ef312d5e9f6_Mask%20group%20(24).webp',
+    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+  },
+  {
+    name: 'Kristin Watson',
+    role: 'Marketing Specialist',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a5069b178148eee153f96c_Mask%20group%20(25).webp',
+    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+  },
+  {
+    name: 'Guy Hawkins',
+    role: 'Marketing Specialist',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a5069b178148eee153f96f_Mask%20group%20(26).webp',
+    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+  },
+  {
+    name: 'Ron Williamson',
+    role: 'Marketing Specialist',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a5069ba1ea7f84bf56b8d6_Mask%20group%20(27).webp',
+    social: { facebook: '#', instagram: '#', twitter: '#', linkedin: '#' },
+  },
 ]
 
-const faqs = [
-  ['Can you use content from our old website?', 'Yes. The current Brand1Solutions content can be refined, reorganized, and elevated into stronger messaging.'],
-  ['Will the site be responsive?', 'Yes. The layout is built mobile-first with adaptive typography, spacing, navigation, and interaction behavior.'],
-  ['Is this SEO friendly?', 'Yes. It uses semantic sections, accessible headings, optimized metadata, fast assets, and clean content hierarchy.'],
-  ['Can animations be reduced?', 'Yes. Motion respects reduced-motion preferences and uses GPU-friendly transforms where possible.'],
+const testimonialsList: Testimonial[] = [
+  {
+    quote: 'We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. They delivered exceptional branding strategies that exceeded our ambitious growth targets.',
+    author: 'Kristin Watson',
+    role: 'Marketing Director',
+    avatar: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d267f7af63905b9b9a11b_Group%2018%20(1).webp',
+    logo: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74dbb0b1600ed11e3f30_Logo%20(4).svg',
+  },
+  {
+    quote: 'Our user acquisition rates doubled within 3 months of partnering with them. Their content creation studio is top-tier and their workflow is highly structured and transparent.',
+    author: 'Liam Anderson',
+    role: 'Product Lead',
+    avatar: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d26725de35b5d16022330_Group%2019.webp',
+    logo: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db0cc97f52ce240dec_Logo%20(2).svg',
+  },
+  {
+    quote: 'A dedicated team that aligns creativity directly with performance metrics. The branding guidelines are highly polished, responsive, and easy to roll out across channels.',
+    author: 'Damien Cabral',
+    role: 'Founder & CEO',
+    avatar: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d265d8569f51df2d0f85f_Group%2017.webp',
+    logo: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db877c549927bc1e19_Logo.svg',
+  },
+]
+
+const partnersList = [
+  {
+    front: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db877c549927bc1e19_Logo.svg',
+    back: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db877c549927bc1e19_Logo.svg',
+  },
+  {
+    front: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db7b87689148cf41eb_Logo%20(1).svg',
+    back: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db7b87689148cf41eb_Logo%20(1).svg',
+  },
+  {
+    front: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db0cc97f52ce240dec_Logo%20(2).svg',
+    back: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db0cc97f52ce240dec_Logo%20(2).svg',
+  },
+  {
+    front: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db2a42138c42cef740_Logo%20(3).svg',
+    back: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74db2a42138c42cef740_Logo%20(3).svg',
+  },
+  {
+    front: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74dbb0b1600ed11e3f30_Logo%20(4).svg',
+    back: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74dbb0b1600ed11e3f30_Logo%20(4).svg',
+  },
+]
+
+const faqsList: FAQItem[] = [
+  {
+    question: 'What services do you offer?',
+    answer: 'We provide end-to-end digital marketing and branding solutions, including brand strategy, digital marketing, social media management, content creation, performance marketing, and web design.',
+  },
+  {
+    question: 'Who do you work with?',
+    answer: 'We work with growth-stage startups, creative agencies, established mid-sized studios, and enterprise brands that require clean positioning and elevated design aesthetic to stand out.',
+  },
+  {
+    question: 'How do you approach a new project?',
+    answer: 'Every project goes through our three-step solution process: Discover (audience research and deep brand insights), Impact (high-fidelity design and build execution), and Growth (conversion-focused analysis and performance scaling).',
+  },
+  {
+    question: 'How long does it take to see results?',
+    answer: 'While branding refreshes and website launches deliver immediate authority upgrades, content campaigns and performance marketing strategies typically show solid quantitative results within 6 to 12 weeks.',
+  },
+  {
+    question: 'Do you offer customized solutions?',
+    answer: 'Yes. All campaigns, structures, layouts, and integrations are tailored strictly around your business objective. We build custom websites, custom dashboards, and specialized strategy models.',
+  },
+]
+
+const blogsList: BlogItem[] = [
+  {
+    author: 'Damien Cabral',
+    date: 'Dec 10, 2025',
+    category: 'Marketing',
+    title: 'How to Build a Strong Marketing Strategy That Delivers Results',
+    excerpt: 'A step-by-step guide to creating a marketing strategy that drives growth, engagement, and measurable outcomes.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c388b330469916aa6e98_Mask%20group%20(2)_optimized.webp',
+  },
+  {
+    author: 'Liam Anderson',
+    date: 'March 15, 2026',
+    category: 'Advertising',
+    title: 'How to Create an Effective Marketing Strategy That Yields Results',
+    excerpt: 'A comprehensive guide to crafting a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c3a21236af6944d5e3f4_Mask%20group%20(3)_optimized.webp',
+  },
+  {
+    author: 'Liam Thompson',
+    date: 'April 10, 2024',
+    category: 'Advertising',
+    title: 'Crafting an Effective Marketing Strategy That Yields Results',
+    excerpt: 'A comprehensive guide to developing a marketing strategy that fosters growth, boosts engagement, and achieves measurable results.',
+    image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae34/69b8c45cd9ee14d78c6efa49_Mask%20group%20(2)_optimized.webp',
+  },
 ]
 
 function App() {
-  const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useState<Theme>('dark')
-  const [active, setActive] = useState('hero')
-  const cursorX = useSpring(useMotionValue(0), { stiffness: 260, damping: 34 })
-  const cursorY = useSpring(useMotionValue(0), { stiffness: 260, damping: 34 })
+  const [menuOpen, setMenuOpen] = useState<MenuOpenState>(false)
+  const [activeProject, setActiveProject] = useState<number>(0)
+  const [activeProcessStep, setActiveProcessStep] = useState<number>(0)
 
+  // Auto advance process steps to mimic slider auto-play
   useEffect(() => {
-    const stored = window.localStorage.getItem('brand1-theme') as Theme | null
-    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    setTheme(stored ?? preferred)
-    const timer = window.setTimeout(() => setLoading(false), 1050)
-    return () => window.clearTimeout(timer)
+    const timer = setInterval(() => {
+      setActiveProcessStep((prev) => (prev + 1) % 3)
+    }, 4500)
+    return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-    window.localStorage.setItem('brand1-theme', theme)
-  }, [theme])
-
-  useEffect(() => {
-    const lenis = new Lenis({ duration: 1.15, smoothWheel: true, wheelMultiplier: 0.85 })
-    const raf = (time: number) => {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
-    requestAnimationFrame(raf)
-    return () => lenis.destroy()
-  }, [])
-
-  useEffect(() => {
-    const onMove = (event: MouseEvent) => {
-      cursorX.set(event.clientX - 18)
-      cursorY.set(event.clientY - 18)
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [cursorX, cursorY])
-
-  useEffect(() => {
-    const sections = gsap.utils.toArray<HTMLElement>('[data-section]')
-    sections.forEach((section) => {
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top center',
-        end: 'bottom center',
-        onEnter: () => setActive(section.id),
-        onEnterBack: () => setActive(section.id),
-      })
-
-      gsap.fromTo(
-        section.querySelectorAll('[data-reveal]'),
-        { y: 36, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: section, start: 'top 72%' },
-        },
-      )
-    })
-
-    gsap.to('[data-parallax]', {
-      yPercent: -12,
-      ease: 'none',
-      scrollTrigger: { trigger: '#work', start: 'top bottom', end: 'bottom top', scrub: true },
-    })
-
-    return () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
-  }, [])
-
-  const schema = useMemo(
-    () => ({
-      '@context': 'https://schema.org',
-      '@type': 'ProfessionalService',
-      name: 'Brand1Solutions',
-      url: 'https://brand1solutions.com',
-      email: 'info@brand1solutions.com',
-      serviceType: ['Web Development', 'UI/UX Design', 'App Development', 'SEO', 'Digital Marketing'],
-    }),
-    [],
-  )
-
   return (
-    <>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-      <AnimatePresence>{loading && <Loader />}</AnimatePresence>
-      <motion.div className="pointer-events-none fixed left-0 top-0 z-50 hidden h-9 w-9 rounded-full border border-cyan-300/50 mix-blend-difference lg:block" style={{ x: cursorX, y: cursorY }} />
-      <div className="min-h-screen overflow-hidden bg-[var(--bg)] text-[var(--text)] selection:bg-cyan-300 selection:text-slate-950">
-        <DynamicBackdrop />
-        <Navbar active={active} theme={theme} setTheme={setTheme} />
-        <main>
-          <Hero />
-          <About />
-          <Services />
-          <Portfolio />
-          <Features />
-          <Testimonials />
-          <Pricing />
-          <FAQ />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
-    </>
-  )
-}
+    <div className="relative min-h-screen bg-light-green text-dark-black overflow-hidden font-roboto antialiased selection:bg-primary selection:text-dark-black">
+      {/* Sticky Header Nav */}
+      <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
-function Loader() {
-  return (
-    <motion.div
-      className="fixed inset-0 z-[80] grid place-items-center bg-slate-950 text-white"
-      exit={{ opacity: 0, scale: 1.04 }}
-      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <motion.div className="relative grid h-40 w-40 place-items-center">
-        <motion.div className="absolute inset-0 rounded-full border border-cyan-300/40" animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
-        <motion.div className="absolute inset-5 rounded-full border border-amber-300/40" animate={{ rotate: -360 }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
-        <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-black tracking-tight">
-          B1
-        </motion.span>
-      </motion.div>
-    </motion.div>
-  )
-}
+      {/* Full screen Drawer Menu */}
+      <AnimatePresence>
+        {menuOpen && <MenuDrawer onClose={() => setMenuOpen(false)} />}
+      </AnimatePresence>
 
-function DynamicBackdrop() {
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <motion.div className="absolute left-[-12rem] top-24 h-[34rem] w-[34rem] rounded-full bg-cyan-400/20 blur-3xl" animate={{ x: [0, 80, 10], y: [0, 30, 90], scale: [1, 1.18, 1] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
-      <motion.div className="absolute bottom-[-10rem] right-[-8rem] h-[32rem] w-[32rem] rounded-full bg-amber-300/16 blur-3xl" animate={{ x: [0, -80, -10], y: [0, -60, -20], scale: [1, 1.12, 1] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(125,211,252,.065)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,.065)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:linear-gradient(to_bottom,black,transparent_82%)]" />
+      <main className="relative z-10">
+        {/* Hero Section */}
+        <HeroSection />
+
+        {/* Double Marquees */}
+        <MarqueeSection />
+
+        {/* About Section */}
+        <AboutSection />
+
+        {/* Services Accordion List */}
+        <ServicesSection />
+
+        {/* Projects Accordion Grid */}
+        <ProjectsSection activeProject={activeProject} setActiveProject={setActiveProject} />
+
+        {/* Stat Marquee Banner */}
+        <StatsMarquee />
+
+        {/* Process Section */}
+        <ProcessSection activeStep={activeProcessStep} setActiveStep={setActiveProcessStep} />
+
+        {/* Team Grid */}
+        <TeamSection />
+
+        {/* Testimonials Fading Slider */}
+        <TestimonialsSection />
+
+        {/* Partners 3D flip section */}
+        <PartnersSection />
+
+        {/* FAQ list */}
+        <FAQSection />
+
+        {/* Blogs list */}
+        <BlogsSection />
+      </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
 
-function Navbar({ active, theme, setTheme }: { active: string; theme: Theme; setTheme: (theme: Theme) => void }) {
-  const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    onScroll()
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
+/* ---------------- HEADER COMPONENT ---------------- */
+function Header({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (o: boolean) => void }) {
   return (
-    <header className={`fixed left-1/2 top-4 z-40 w-[min(1180px,calc(100%_-_28px))] -translate-x-1/2 transition-all duration-300 ${scrolled ? 'glass shadow-2xl shadow-cyan-950/10' : 'bg-transparent'}`}>
-      <nav className="flex h-16 items-center justify-between px-3 md:px-4" aria-label="Main navigation">
-        <a href="#hero" className="magnetic inline-flex items-center gap-3 rounded-xl p-2 font-black tracking-tight">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-700 text-white shadow-lg shadow-cyan-500/20">B1</span>
-          <span className="leading-none">Brand1<span className="block text-xs font-bold text-cyan-500">Solutions</span></span>
+    <header className="sticky top-0 z-40 w-full border-b border-border-green/20 bg-light-green/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-8">
+        <a href="/" className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black hover:opacity-90 transition-opacity">
+          <span>Brand1</span>
+          <span className="rounded-full bg-primary px-3 py-1 text-xs text-dark-black font-extrabold tracking-widest">Solution</span>
         </a>
 
-        <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-xl lg:flex">
-          {navItems.map((item) => (
-            <a key={item} href={`#${item}`} className={`relative rounded-full px-4 py-2 text-sm font-bold capitalize transition-colors ${active === item ? 'text-slate-950 dark:text-white' : 'text-[var(--muted)] hover:text-[var(--text)]'}`}>
-              {active === item && <motion.span layoutId="active-nav" className="absolute inset-0 -z-10 rounded-full bg-white shadow-sm dark:bg-white/10" />}
-              {item}
-            </a>
-          ))}
-        </div>
+        {/* Desktop Links */}
+        <nav className="hidden items-center gap-8 lg:flex font-roboto font-semibold text-dark-black/75">
+          <a href="#about" className="hover:text-dark-black transition-colors">About</a>
+          <a href="#services" className="hover:text-dark-black transition-colors">Service</a>
+          <a href="#projects" className="hover:text-dark-black transition-colors">Projects</a>
+          <a href="#process" className="hover:text-dark-black transition-colors">Process</a>
+          <a href="#faq" className="hover:text-dark-black transition-colors">FAQ</a>
+          <a href="#blogs" className="hover:text-dark-black transition-colors">Blogs</a>
+        </nav>
 
-        <div className="flex items-center gap-2">
-          <button className="magnetic grid h-11 w-11 place-items-center rounded-full border border-[var(--line)] bg-[var(--panel)]" type="button" aria-label="Toggle color theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? '☼' : '◐'}
-          </button>
-          <a href="#contact" className="magnetic hidden rounded-full bg-[var(--text)] px-5 py-3 text-sm font-black text-[var(--bg)] shadow-xl shadow-cyan-500/10 sm:inline-flex">Start</a>
-          <button className="grid h-11 w-11 place-items-center rounded-full border border-[var(--line)] bg-[var(--panel)] lg:hidden" type="button" aria-label="Open menu" onClick={() => setOpen((value) => !value)}>
-            <span className="h-0.5 w-5 bg-current shadow-[0_7px_0_currentColor]" />
+        {/* Desktop CTA & Mobile Toggle */}
+        <div className="flex items-center gap-4">
+          <a href="#contact" className="primary-button-hover group hidden items-center gap-2 rounded-full border border-border-green bg-dark-black px-6 py-2.5 text-white lg:flex">
+            <span className="font-roboto-condensed text-sm font-bold uppercase tracking-wider">Contact Us</span>
+            <div className="relative flex h-6 w-6 items-center justify-center rounded-full bg-primary text-dark-black overflow-hidden">
+              <svg className="btn-arrow-slide h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+              <svg className="absolute -left-5 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5 text-dark-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </a>
+
+          {/* Hamburger Icon */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-border-green/60 bg-transparent transition-colors hover:bg-border-green/10"
+            aria-label="Toggle Drawer Menu"
+          >
+            <div className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+            <div className={`h-0.5 w-5 bg-dark-black transition-opacity duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+            <div className={`h-0.5 w-5 bg-dark-black transition-transform duration-300 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
           </button>
         </div>
-      </nav>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ opacity: 0, y: -10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.98 }} className="glass mx-3 mb-3 grid gap-1 rounded-2xl p-3 lg:hidden">
-            {navItems.map((item) => <a key={item} href={`#${item}`} onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-lg font-black capitalize">{item}</a>)}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </header>
   )
 }
 
-function Hero() {
+/* ---------------- MOBILE MENU DRAWER ---------------- */
+function MenuDrawer({ onClose }: { onClose: () => void }) {
   return (
-    <section id="hero" data-section className="section grid min-h-screen items-center pt-28 lg:grid-cols-[1fr_.9fr] lg:pt-20">
-      <div>
-        <RevealText eyebrow="Digital agency for serious brands" title="Digital experiences with the polish of a product launch." />
-        <p data-reveal className="mt-7 max-w-2xl text-xl leading-8 text-[var(--muted)]">
-          Brand1Solutions designs and builds premium websites, apps, brand systems, and growth experiences that feel fast, memorable, and unmistakably credible.
-        </p>
-        <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <MagneticButton href="#work">View Work</MagneticButton>
-          <MagneticButton href="#contact" subtle>Book a Strategy Call</MagneticButton>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex justify-end bg-dark-black/40 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="h-full w-full max-w-md bg-light-green p-8 border-l border-border-green/40 shadow-2xl flex flex-col justify-between"
+      >
+        <div>
+          <div className="flex items-center justify-between mb-16">
+            <div className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black">
+              <span>Brand1</span>
+              <span className="rounded-full bg-primary px-3 py-1 text-xs text-dark-black font-extrabold tracking-widest">Solution</span>
+            </div>
+            <button onClick={onClose} className="h-10 w-10 border border-border-green rounded-full grid place-items-center hover:bg-border-green/10 transition-colors">
+              ✕
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-6 text-3xl font-roboto-condensed font-black uppercase text-dark-black">
+            <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">Home</a>
+            <a href="#about" onClick={onClose} className="hover:text-primary transition-colors">About</a>
+            <a href="#services" onClick={onClose} className="hover:text-primary transition-colors">Service</a>
+            <a href="#projects" onClick={onClose} className="hover:text-primary transition-colors">Projects</a>
+            <a href="#process" onClick={onClose} className="hover:text-primary transition-colors">Process</a>
+            <a href="#faq" onClick={onClose} className="hover:text-primary transition-colors">FAQ</a>
+            <a href="#blogs" onClick={onClose} className="hover:text-primary transition-colors">Blogs</a>
+          </nav>
         </div>
-      </div>
-      <motion.div data-reveal className="relative mt-14 lg:mt-0" initial={{ rotateX: 10, rotateY: -10 }} whileHover={{ rotateX: 0, rotateY: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 18 }}>
-        <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-r from-cyan-400 via-blue-600 to-amber-300 opacity-40 blur-2xl" />
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/10 shadow-2xl shadow-cyan-950/20">
-          <img src={agencyHero} alt="Brand1Solutions premium digital product studio" className="h-[520px] w-full object-cover" loading="eager" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-white/10" />
-          <FloatingMetric className="left-5 top-5" label="Site lift" value="+68%" />
-          <FloatingMetric className="bottom-5 right-5" label="Launch speed" value="2.4x" />
+
+        <div>
+          <div className="h-px bg-border-green/30 my-6" />
+          <a href="#contact" onClick={onClose} className="primary-button-hover group flex w-full items-center justify-center gap-3 rounded-full bg-dark-black py-4 text-white">
+            <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">Contact Us</span>
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-dark-black overflow-hidden">
+              <svg className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+              <svg className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-dark-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </a>
         </div>
       </motion.div>
-    </section>
-  )
-}
-
-function RevealText({ eyebrow, title }: { eyebrow: string; title: string }) {
-  const words = title.split(' ')
-  return (
-    <div>
-      <p data-reveal className="eyebrow">{eyebrow}</p>
-      <h1 className="max-w-5xl text-balance text-6xl font-black leading-[.92] tracking-[-0.055em] md:text-8xl lg:text-[7.8rem]">
-        {words.map((word, index) => (
-          <motion.span key={`${word}-${index}`} className="mr-4 inline-block overflow-hidden" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.05 + index * 0.035, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}>
-            {word}
-          </motion.span>
-        ))}
-      </h1>
-    </div>
-  )
-}
-
-function FloatingMetric({ label, value, className }: { label: string; value: string; className: string }) {
-  return (
-    <motion.div className={`absolute rounded-2xl border border-white/20 bg-white/12 p-4 text-white shadow-2xl backdrop-blur-xl ${className}`} animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
-      <span className="text-xs font-bold uppercase tracking-widest text-cyan-100">{label}</span>
-      <strong className="block text-3xl font-black">{value}</strong>
     </motion.div>
   )
 }
 
-function About() {
+/* ---------------- HERO SECTION ---------------- */
+function HeroSection() {
   return (
-    <Section id="about" eyebrow="About" title="We combine creative direction with senior frontend engineering.">
-      <div className="grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
-        <div data-reveal className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel)]">
-          <img src={globalStudio} alt="Global creative workspace" className="h-full w-full object-cover opacity-90" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
-          {['Strategy', 'Design', 'Build', 'Growth'].map((item, index) => (
-            <motion.span key={item} className="absolute rounded-full border border-white/15 bg-white/15 px-4 py-2 text-sm font-black text-white backdrop-blur-xl" style={{ left: `${12 + (index % 2) * 48}%`, top: `${18 + index * 18}%` }} animate={{ y: [0, -12, 0] }} transition={{ duration: 4 + index, repeat: Infinity, ease: 'easeInOut' }}>
-              {item}
-            </motion.span>
-          ))}
-        </div>
-        <div data-reveal className="grid content-center gap-8">
-          <p className="max-w-2xl text-2xl leading-10 text-[var(--muted)]">
-            We turn business ambition into digital presence: clear positioning, expressive design, reliable React builds, and growth systems that keep improving after launch.
+    <section className="relative overflow-hidden bg-light-green py-20 lg:py-32">
+      {/* Decorative overlay background lines */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699bdcf6ab2fe2e2b2c2850d_Group%203.svg" alt="Line decoration" className="absolute bottom-0 left-0 w-full opacity-60" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8 grid gap-12 lg:grid-cols-12 items-center">
+        {/* Left Column Content */}
+        <div className="lg:col-span-7 flex flex-col items-start text-left">
+          <div className="overflow-hidden mb-4">
+            <span className="inline-block rounded-full border border-border-green px-4 py-1.5 text-xs font-black uppercase tracking-widest text-deep-gray bg-border-green/10">
+              Creative Agency Studio
+            </span>
+          </div>
+
+          <h1 className="font-roboto-condensed text-5xl font-black leading-[1.0] tracking-tight text-dark-black md:text-7xl lg:text-8xl uppercase mb-6">
+            BRAND1 _ <br />SOLUTION
+          </h1>
+
+          <p className="max-w-xl text-lg font-medium leading-relaxed text-black-main mb-8">
+            We help brands grow through smart marketing solutions powered by creativity and technology. Solutions built to grow, scale, and perform.
           </p>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Counter end={42} suffix="+" label="Launches" />
-            <Counter end={98} suffix="%" label="Client satisfaction" />
-            <Counter end={3} suffix="x" label="Avg. clarity lift" />
+
+          <a href="#contact" className="primary-button-hover group flex items-center gap-3 rounded-full bg-dark-black px-7 py-4 text-white">
+            <span className="font-roboto-condensed text-lg uppercase tracking-wider font-bold">Contact Us</span>
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary text-dark-black overflow-hidden">
+              <svg className="btn-arrow-slide h-4 w-4 transition-transform duration-300 group-hover:translate-x-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+              <svg className="absolute -left-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-6 text-dark-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        {/* Right Column Visual Overlay */}
+        <div className="lg:col-span-5 relative flex justify-center items-center">
+          {/* Slow spinning badge element */}
+          <div className="absolute -left-12 -top-12 z-20 h-36 w-36 animate-spin-slow">
+            <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699c0db6fa87821af2dbd857_-%20AWARD%20WINNING%20AGENCY%20-%20SINCE%202016%20(1).webp" alt="Award badge" className="w-full h-full object-contain" />
+          </div>
+
+          <div className="relative organic-mask-hero border-4 border-border-green/30 bg-bg-deep p-2 shadow-xl aspect-square w-full max-w-[420px] overflow-hidden">
+            <img
+              src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69b4e4c8e4f0bbee0226282b_Mask%20group%20(18).webp"
+              alt="Digital marketing portrait"
+              className="h-full w-full object-cover rounded-[34px] scale-[1.02]"
+            />
           </div>
         </div>
       </div>
-    </Section>
-  )
-}
-
-function Services() {
-  return (
-    <Section id="services" eyebrow="Services" title="Four disciplines. One premium digital system.">
-      <div className="grid gap-5 lg:grid-cols-4">
-        {services.map((service, index) => (
-          <motion.article data-reveal key={service.title} className="group relative min-h-[360px] overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] p-7" whileHover={{ y: -10 }} transition={{ type: 'spring', stiffness: 180, damping: 18 }}>
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            <span className="text-sm font-black uppercase tracking-[.2em] text-cyan-500">{service.eyebrow}</span>
-            <h3 className="mt-16 text-3xl font-black tracking-tight">{service.title}</h3>
-            <p className="mt-5 leading-7 text-[var(--muted)]">{service.copy}</p>
-            <span className="absolute bottom-5 right-6 text-7xl font-black text-[var(--text)] opacity-5">0{index + 1}</span>
-          </motion.article>
-        ))}
-      </div>
-    </Section>
-  )
-}
-
-function Portfolio() {
-  return (
-    <Section id="work" eyebrow="Portfolio" title="Selected concepts built to feel distinct.">
-      <div className="grid gap-6">
-        {portfolio.map(([name, copy, type], index) => (
-          <motion.article data-reveal key={name} className="group grid overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] md:grid-cols-[.8fr_1.2fr]" whileHover={{ scale: 0.99 }}>
-            <div className="relative min-h-72 overflow-hidden">
-              <img data-parallax src={index === 1 ? agencyHero : globalStudio} alt={`${name} project concept`} className="h-[120%] w-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/25 to-slate-950/70" />
-            </div>
-            <div className="grid content-between gap-10 p-8 md:p-12">
-              <span className="w-fit rounded-full bg-cyan-400/10 px-4 py-2 text-sm font-black text-cyan-500">{type}</span>
-              <div>
-                <h3 className="text-4xl font-black tracking-tight md:text-6xl">{name}</h3>
-                <p className="mt-5 max-w-2xl text-xl leading-8 text-[var(--muted)]">{copy}</p>
-              </div>
-            </div>
-          </motion.article>
-        ))}
-      </div>
-    </Section>
-  )
-}
-
-function Features() {
-  return (
-    <Section id="features" eyebrow="Features" title="Premium details that make the site feel alive.">
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
-        <div data-reveal className="rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] p-8">
-          <AnimatedSvg />
-        </div>
-        <div className="grid gap-4">
-          {['Lenis smooth scrolling', 'Framer page motion', 'GSAP scroll reveals', 'Dark and light modes', 'Accessible semantic structure'].map((item) => (
-            <div data-reveal key={item} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 text-xl font-black">{item}</div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  )
-}
-
-function Testimonials() {
-  return (
-    <Section id="testimonials" eyebrow="Testimonials" title="A site should make the business feel inevitable.">
-      <div data-reveal className="overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] py-8">
-        <motion.div className="flex gap-6 whitespace-nowrap" animate={{ x: ['0%', '-50%'] }} transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}>
-          {[...Array(2)].flatMap(() => ['Premium execution', 'Clear communication', 'Beautiful motion', 'Fast delivery', 'Conversion focused']).map((item, index) => (
-            <span key={`${item}-${index}`} className="rounded-full border border-[var(--line)] px-8 py-4 text-3xl font-black tracking-tight">{item}</span>
-          ))}
-        </motion.div>
-      </div>
-    </Section>
-  )
-}
-
-function Pricing() {
-  return (
-    <Section id="pricing" eyebrow="Pricing" title="Flexible packages for different launch moments.">
-      <div className="grid gap-5 lg:grid-cols-3">
-        {pricing.map(([name, price, copy, items]) => (
-          <article data-reveal key={name as string} className="rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] p-7">
-            <h3 className="text-3xl font-black">{name as string}</h3>
-            <p className="mt-4 text-5xl font-black tracking-tight">{price as string}</p>
-            <p className="mt-4 leading-7 text-[var(--muted)]">{copy as string}</p>
-            <ul className="mt-8 grid gap-3">
-              {(items as string[]).map((item) => <li key={item} className="flex gap-3 text-sm font-bold"><span className="text-cyan-500">✦</span>{item}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </Section>
-  )
-}
-
-function FAQ() {
-  return (
-    <Section id="faq" eyebrow="FAQ" title="Straight answers before the first call.">
-      <div className="mx-auto max-w-4xl divide-y divide-[var(--line)] rounded-[2rem] border border-[var(--line)] bg-[var(--panel)]">
-        {faqs.map(([question, answer]) => <Accordion key={question} question={question} answer={answer} />)}
-      </div>
-    </Section>
-  )
-}
-
-function Contact() {
-  return (
-    <Section id="contact" eyebrow="Contact" title="Tell us what you want your brand to become.">
-      <div className="grid gap-6 lg:grid-cols-[1fr_.75fr]">
-        <form data-reveal className="grid gap-4 rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] p-6 md:p-8">
-          <input aria-label="Name" placeholder="Name" className="field" />
-          <input aria-label="Email" placeholder="Email" className="field" type="email" />
-          <textarea aria-label="Project details" placeholder="What are we building?" className="field min-h-40 resize-y" />
-          <MagneticButton href="mailto:info@brand1solutions.com">Send Inquiry</MagneticButton>
-        </form>
-        <aside data-reveal className="rounded-[2rem] border border-[var(--line)] bg-[var(--panel)] p-8">
-          <img src={globalStudio} alt="Creative contact workspace" className="mb-7 h-64 w-full rounded-3xl object-cover" loading="lazy" />
-          <a className="block text-2xl font-black" href="mailto:info@brand1solutions.com">info@brand1solutions.com</a>
-          <a className="mt-5 block text-[var(--muted)]" href="tel:+15169829342">John Haines: +516-982-9342</a>
-          <a className="mt-2 block text-[var(--muted)]" href="tel:+16197142878">Michael Anderson: +619-714-2878</a>
-          <p className="mt-6 text-[var(--muted)]">14.7 Woodbury Road, Huntington, NY 11743</p>
-        </aside>
-      </div>
-    </Section>
-  )
-}
-
-function Section({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} data-section className="section py-24 md:py-32">
-      <div data-reveal className="mb-12 max-w-4xl">
-        <p className="eyebrow">{eyebrow}</p>
-        <h2 className="text-balance text-5xl font-black leading-[.98] tracking-[-.045em] md:text-7xl">{title}</h2>
-      </div>
-      {children}
     </section>
   )
 }
 
-function MagneticButton({ href, children, subtle = false }: { href: string; children: ReactNode; subtle?: boolean }) {
+/* ---------------- MARQUEE SECTION ---------------- */
+function MarqueeSection() {
+  const words = ['Designed for growth', 'Built for impact']
   return (
-    <a href={href} className={`magnetic group relative inline-flex min-h-14 items-center justify-center overflow-hidden rounded-full px-7 text-sm font-black transition-transform hover:-translate-y-1 ${subtle ? 'border border-[var(--line)] bg-[var(--panel)] text-[var(--text)]' : 'bg-[var(--text)] text-[var(--bg)] shadow-2xl shadow-cyan-500/15'}`}>
-      <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-      <span className="relative">{children}</span>
-    </a>
+    <section className="bg-dark-black py-8 border-y-2 border-border-green/20 overflow-hidden select-none">
+      {/* Row 1 - Left to Right */}
+      <div className="flex w-full whitespace-nowrap overflow-hidden py-2.5">
+        <div className="animate-marquee-left flex gap-12 text-2xl md:text-3xl font-roboto-condensed font-black uppercase text-primary">
+          {[...Array(6)].flatMap((_, i) =>
+            words.map((word, wIdx) => (
+              <div key={`m1-${i}-${wIdx}`} className="flex items-center gap-8">
+                <span>{word}</span>
+                <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69b53497ca28dbd5887c06a1_Vector%20(1).svg" alt="star" className="h-6 w-6 text-primary" />
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Row 2 - Right to Left with Outlined text */}
+      <div className="flex w-full whitespace-nowrap overflow-hidden py-2.5 border-t border-border-green/10 mt-2">
+        <div className="animate-marquee-right flex gap-12 text-2xl md:text-3xl font-roboto-condensed font-black uppercase">
+          {[...Array(12)].map((_, i) => (
+            <div key={`m2-${i}`} className="flex items-center gap-8">
+              <span className={i % 2 === 0 ? 'text-white' : 'text-transparent stroke-text'}>
+                Designed for growth
+              </span>
+              <span className="text-white/40">•</span>
+            </div>
+          ))}
+        </div>
+        <style>{`
+          .stroke-text {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+          }
+        `}</style>
+      </div>
+    </section>
   )
 }
 
-function Counter({ end, suffix, label }: { end: number; suffix: string; label: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-  const [value, setValue] = useState(0)
-
-  useEffect(() => {
-    if (!inView) return
-    let frame = 0
-    const total = 54
-    const timer = window.setInterval(() => {
-      frame += 1
-      setValue(Math.round((frame / total) * end))
-      if (frame >= total) window.clearInterval(timer)
-    }, 22)
-    return () => window.clearInterval(timer)
-  }, [end, inView])
+/* ---------------- ABOUT STUDIO SECTION ---------------- */
+function AboutSection() {
+  const avatars = [
+    'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d265d8569f51df2d0f85f_Group%2017.webp',
+    'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d26725de35b5d16022330_Group%2019.webp',
+    'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d267f7af63905b9b9a11b_Group%2018%20(1).webp',
+    'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d26a119b49e6e3c693ab1_Group%2020.webp',
+  ]
 
   return (
-    <div ref={ref} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5">
-      <strong className="text-4xl font-black">{value}{suffix}</strong>
-      <span className="mt-2 block text-sm font-bold text-[var(--muted)]">{label}</span>
-    </div>
+    <section id="about" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Intro Header */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <p className="lg:col-span-3 text-left font-roboto-condensed text-xl font-black uppercase text-deep-gray tracking-wide">
+            About Studio
+          </p>
+          <h2 className="lg:col-span-9 text-left font-roboto-condensed text-3xl font-black leading-tight text-dark-black md:text-5xl lg:text-6xl uppercase">
+            We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose.
+          </h2>
+        </div>
+
+        {/* Feature Blocks grid */}
+        <div className="grid gap-10 lg:grid-cols-2 mt-12">
+          {/* Map/Global badge card */}
+          <div className="flex flex-col justify-between rounded-[40px] border border-border-green/60 bg-bg-deep p-8 md:p-12 relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="max-w-[140px] mb-8">
+                <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d35e18b6ee6d988e279a4_Simplification%20(1).webp" alt="world map icon" className="w-full h-auto" />
+              </div>
+              <h3 className="font-roboto-condensed text-2xl md:text-3xl font-black uppercase leading-tight text-dark-black mb-8 max-w-xs">
+                Brand1 Solution supports clients from all over the world
+              </h3>
+            </div>
+
+            {/* Overlapping Client Avatars */}
+            <div className="relative z-10 flex items-center mt-6">
+              <div className="flex -space-x-4">
+                {avatars.map((img, i) => (
+                  <img key={`av-${i}`} src={img} alt="client avatar" className="h-14 w-14 rounded-full border-4 border-bg-deep object-cover shadow-md" />
+                ))}
+              </div>
+              <div className="ml-4 h-1 w-24 bg-border-green/40 rounded-full" />
+            </div>
+          </div>
+
+          {/* Unblur chart image card */}
+          <div className="flex flex-col justify-between rounded-[40px] border border-border-green/60 bg-bg-deep p-8 md:p-12 relative overflow-hidden">
+            <div className="relative h-64 md:h-72 w-full rounded-3xl overflow-hidden border border-border-green/30 mb-8 group">
+              <motion.img
+                initial={{ filter: 'blur(6px)' }}
+                whileInView={{ filter: 'blur(0px)' }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.8 }}
+                src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d2935a9d8d5ecf784d3c7_image%2045.webp"
+                alt="analytics graphic"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-dark-black/5" />
+            </div>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <p className="text-black-main font-medium max-w-sm text-left">
+                We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose.
+              </p>
+              <a href="#contact" className="primary-button-hover group flex items-center gap-3 rounded-full bg-dark-black px-6 py-4 text-white shrink-0">
+                <span className="font-roboto-condensed text-base uppercase tracking-wider font-bold">Contact Us</span>
+                <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-primary text-dark-black overflow-hidden">
+                  <svg className="btn-arrow-slide h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                  <svg className="absolute -left-5 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-5 text-dark-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
-function Accordion({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false)
+/* ---------------- SERVICES ACCORDION COMPONENT ---------------- */
+function ServicesSection() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setMousePos({
+      x: e.clientX - rect.left - 120, // centers the floating image
+      y: e.clientY - rect.top - 80,
+    })
+  }
+
   return (
-    <div data-reveal>
-      <button type="button" className="flex w-full items-center justify-between gap-6 p-6 text-left text-xl font-black" onClick={() => setOpen((value) => !value)}>
-        {question}
-        <motion.span animate={{ rotate: open ? 45 : 0 }} className="text-cyan-500">+</motion.span>
-      </button>
-      <AnimatePresence>
-        {open && <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden px-6 pb-6 leading-7 text-[var(--muted)]">{answer}</motion.p>}
-      </AnimatePresence>
-    </div>
+    <section id="services" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20 relative">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Title */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+            Services
+          </h2>
+          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+            Strategic marketing solutions designed to drive growth and measurable results. Solutions built to grow, scale, and perform.
+          </p>
+        </div>
+
+        {/* Hover Accordion List */}
+        <div
+          className="relative border-t border-border-green mt-12 select-none"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={() => setHoveredIdx(null)}
+        >
+          {servicesList.map((service, index) => {
+            const isHovered = hoveredIdx === index
+            return (
+              <div
+                key={service.id}
+                onMouseEnter={() => setHoveredIdx(index)}
+                className="group relative border-b border-border-green/60 py-8 transition-colors duration-300 hover:bg-bg-deep/40 cursor-pointer"
+              >
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between px-4 md:px-8 gap-4">
+                  {/* Service Number & Title */}
+                  <div className="flex items-center gap-6">
+                    <span className="font-roboto-condensed text-xl font-bold text-deep-gray">
+                      ({service.id})
+                    </span>
+                    <h3 className="font-roboto-condensed text-2xl md:text-3xl font-black uppercase text-dark-black">
+                      {service.title}
+                    </h3>
+                  </div>
+
+                  {/* Rotatable Arrow Indicator */}
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border-green bg-transparent text-dark-black transition-all duration-300 group-hover:bg-primary group-hover:border-primary group-hover:rotate-45">
+                    <img
+                      src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699d5d868239f0565df4855d_Arrow%20-%20Right.webp"
+                      alt="Arrow icon"
+                      className="h-5 w-5 object-contain"
+                    />
+                  </div>
+                </div>
+
+                {/* Smooth Expand content */}
+                <motion.div
+                  initial={false}
+                  animate={{ height: isHovered ? 'auto' : 0, opacity: isHovered ? 1 : 0 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="overflow-hidden px-4 md:px-20 text-left"
+                >
+                  <p className="mt-4 text-black-main font-medium leading-relaxed max-w-xl">
+                    {service.copy}
+                  </p>
+                  {/* Tag chips */}
+                  <div className="flex flex-wrap gap-3 mt-6">
+                    {service.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border-green px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-dark-black bg-white"
+                      >
+                        <span className="h-2 w-2 rounded-full bg-primary" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            )
+          })}
+
+          {/* Floating hover follow image cursor */}
+          <AnimatePresence>
+            {hoveredIdx !== null && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 150 }}
+                style={{
+                  position: 'absolute',
+                  left: mousePos.x,
+                  top: mousePos.y,
+                  pointerEvents: 'none',
+                  zIndex: 30,
+                }}
+                className="hidden lg:block h-40 w-60 border-2 border-border-green rounded-2xl overflow-hidden shadow-2xl bg-bg-deep"
+              >
+                <img
+                  src={servicesList[hoveredIdx].image}
+                  alt="Service preview"
+                  className="h-full w-full object-cover"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
   )
 }
 
-function AnimatedSvg() {
+/* ---------------- PROJECTS SECTION ---------------- */
+function ProjectsSection({ activeProject, setActiveProject }: { activeProject: number; setActiveProject: (i: number) => void }) {
   return (
-    <svg viewBox="0 0 900 420" role="img" aria-label="Animated product system diagram" className="h-full min-h-[360px] w-full">
-      <defs>
-        <linearGradient id="lineGradient" x1="0" x2="1">
-          <stop stopColor="#22d3ee" />
-          <stop offset="1" stopColor="#fbbf24" />
-        </linearGradient>
-      </defs>
-      <motion.path d="M80 210 C210 40 330 380 460 210 S700 40 820 210" fill="none" stroke="url(#lineGradient)" strokeWidth="4" strokeLinecap="round" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 1.8, ease: 'easeInOut' }} />
-      {[80, 260, 450, 640, 820].map((x, index) => (
-        <motion.circle key={x} cx={x} cy={index % 2 ? 140 : 210} r="34" fill="rgba(34,211,238,.15)" stroke="rgba(34,211,238,.55)" initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.12 }} />
-      ))}
-    </svg>
+    <section id="projects" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Header Title */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+            Our Projects
+          </h2>
+          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+            We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. Solutions designed to scale.
+          </p>
+        </div>
+
+        {/* Dynamic Width Accordion Cards Grid */}
+        <div className="flex flex-col lg:flex-row gap-6 mt-12 min-h-[500px]">
+          {projectsList.map((project, index) => {
+            const isActive = activeProject === index
+            return (
+              <div
+                key={project.id}
+                onMouseEnter={() => setActiveProject(index)}
+                className={`relative flex flex-col justify-between rounded-[40px] border border-border-green/60 bg-bg-deep p-8 md:p-10 cursor-pointer overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? 'w-full lg:flex-[2.5]' : 'w-full lg:flex-[1]'}`}
+              >
+                {/* Text content details */}
+                <div className="relative z-10 flex flex-col items-start text-left">
+                  <div className="flex items-center gap-4 mb-6">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-border-green/20 border border-border-green text-sm font-bold text-dark-black font-roboto-condensed">
+                      {project.num}
+                    </span>
+                    <h3 className="font-roboto-condensed text-2xl md:text-3xl font-black uppercase text-dark-black">
+                      {project.title}
+                    </h3>
+                  </div>
+
+                  {/* Description only shown or opacity transitions based on active */}
+                  <div className={`transition-all duration-500 overflow-hidden ${isActive ? 'max-h-40 opacity-100' : 'max-h-0 lg:max-h-0 opacity-0'}`}>
+                    <p className="text-black-main font-medium leading-relaxed max-w-md">
+                      {project.copy}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Project Image Overlay inside the container */}
+                <div className="relative mt-8 h-64 lg:h-72 w-full overflow-hidden rounded-3xl border border-border-green/30">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-dark-black/5" />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
   )
 }
 
+/* ---------------- GIANT STAT MARQUEE ---------------- */
+function StatsMarquee() {
+  return (
+    <section className="bg-bg-deep py-20 border-b border-border-green/20 relative overflow-hidden select-none">
+      {/* Outer Banner wraps */}
+      <div className="border-y-2 border-border-green py-8 flex items-center whitespace-nowrap overflow-hidden">
+        <div className="animate-marquee-left flex gap-16 text-6xl md:text-8xl font-roboto-condensed font-black uppercase text-dark-black">
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="flex items-center gap-12">
+              <span>DIGITAL _ MARKETING_AGENCY</span>
+              <span className="text-primary">•</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Floating stat panel overlay wrapper */}
+      <div className="mx-auto max-w-7xl px-6 md:px-8 mt-12 flex flex-col md:flex-row items-center justify-between gap-8 z-10 relative">
+        <div className="flex items-center gap-6">
+          <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699e74dbb1e20032c584943b_Star%201.svg" alt="Giant Star" className="h-16 w-16 text-dark-black" />
+          <p className="font-roboto-condensed text-xl font-bold uppercase text-dark-black tracking-wider text-left">
+            Cause-Led Brand Agency <br />Building Purpose
+          </p>
+        </div>
+
+        {/* Stats overlay ticket container */}
+        <div className="flex flex-wrap justify-center gap-6 bg-white border-2 border-border-green rounded-[30px] p-6 shadow-lg">
+          <div className="flex items-center gap-4 border-r border-border-green/40 pr-6">
+            <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a2646e786d6e61bdb5e677_14k.svg" alt="14k badge" className="h-12 w-auto" />
+            <div className="text-left">
+              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">14K</h4>
+              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">Completed Projects</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 pl-2">
+            <img src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a26798fbf985a30a5da8b3_38%2B%20(3).svg" alt="38 award badge" className="h-12 w-auto" />
+            <div className="text-left">
+              <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">38+</h4>
+              <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">Top Agency Awards</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- PROCESS SECTION ---------------- */
+function ProcessSection({ activeStep, setActiveStep }: { activeStep: number; setActiveStep: (i: number) => void }) {
+  const steps = [
+    {
+      num: 'step 01',
+      title: 'Discover',
+      copy: 'We understand your brand, target audience, and business goals through detailed industrial insights, user metrics analysis, and target research workshops.',
+      image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699fcf647fca9ec7764151b7_Simplification%20(3).webp',
+    },
+    {
+      num: 'step 02',
+      title: 'Impact',
+      copy: 'We conceptualize visual frameworks, design systems, modern prototypes, and deploy high-fidelity frontend systems that deliver instant credibility.',
+      image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699fcf63a70c9af4c0143b31_Simplification%20(4).webp',
+    },
+    {
+      num: 'step 03',
+      title: 'Growth',
+      copy: 'We analyze ongoing traffic metrics, execute page conversion rate optimization tests, and adjust digital campaigns to scale your brand authority.',
+      image: 'https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/699fcf6335fca42deeee7c84_Simplification%20(5).webp',
+    },
+  ]
+
+  return (
+    <section id="process" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-start">
+          {/* Title Left */}
+          <div className="lg:col-span-4 text-left">
+            <h2 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black mb-6">
+              Our Solution Process
+            </h2>
+            <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+              A seamless journey that transforms ideas into impactful solutions through creativity, strategy, and performance.
+            </p>
+          </div>
+
+          {/* Stepper Center/Right */}
+          <div className="lg:col-span-8 grid gap-8 md:grid-cols-12">
+            {/* SVG Connector step line */}
+            <div className="md:col-span-2 hidden md:flex flex-col items-center relative py-4">
+              {steps.map((_, i) => (
+                <div key={`ind-${i}`} className="flex flex-col items-center relative h-36">
+                  {/* Step ball circle */}
+                  <button
+                    onClick={() => setActiveStep(i)}
+                    className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 font-bold ${activeStep === i ? 'bg-primary border-primary text-dark-black scale-110 shadow-lg' : 'bg-white border-border-green text-deep-gray'}`}
+                  >
+                    {i + 1}
+                  </button>
+                  {/* Vertical connecting line indicator */}
+                  {i < 2 && (
+                    <div className="absolute top-10 bottom-0 left-[19px] w-0.5 bg-border-green/45 overflow-hidden">
+                      {activeStep === i && (
+                        <div className="absolute top-0 w-full h-full bg-primary animate-pulse" />
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Slider cards box */}
+            <div className="md:col-span-10 flex flex-col gap-6">
+              {steps.map((step, idx) => {
+                const isActive = activeStep === idx
+                return (
+                  <div
+                    key={step.num}
+                    onClick={() => setActiveStep(idx)}
+                    className={`rounded-[40px] border border-border-green/60 p-8 text-left transition-all duration-500 cursor-pointer ${isActive ? 'bg-white shadow-xl translate-x-2' : 'bg-bg-deep/40 opacity-70'}`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-bg-deep border border-border-green flex items-center justify-center shrink-0">
+                          <img src={step.image} alt={step.title} className="h-7 w-7 object-contain" />
+                        </div>
+                        <div>
+                          <span className="font-roboto-condensed text-xs font-black uppercase text-deep-gray tracking-wider">
+                            {step.num}
+                          </span>
+                          <h3 className="font-roboto-condensed text-2xl font-black uppercase text-dark-black leading-none">
+                            {step.title}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-black-main font-medium leading-relaxed">
+                      {step.copy}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- TEAM SECTION ---------------- */
+function TeamSection() {
+  return (
+    <section id="team" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Title */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+            Our Team Members
+          </h2>
+          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+            A seamless journey that transforms ideas into impactful solutions through creativity, strategy, and performance.
+          </p>
+        </div>
+
+        {/* Team Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12">
+          {teamList.map((member) => (
+            <div key={member.name} className="group relative flex flex-col rounded-[32px] border border-border-green bg-bg-deep p-4 overflow-hidden">
+              {/* Photo Box */}
+              <div className="relative h-80 w-full overflow-hidden rounded-[24px] border border-border-green/30 bg-white">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Slide Up Socials Drawer overlay */}
+                <div className="absolute inset-x-0 bottom-0 translate-y-full bg-dark-black/80 backdrop-blur-sm p-4 transition-transform duration-300 group-hover:translate-y-0 flex justify-center gap-4">
+                  <a href={member.social.facebook} className="text-white hover:text-primary transition-colors">FB</a>
+                  <a href={member.social.instagram} className="text-white hover:text-primary transition-colors">IG</a>
+                  <a href={member.social.twitter} className="text-white hover:text-primary transition-colors">TW</a>
+                  <a href={member.social.linkedin} className="text-white hover:text-primary transition-colors">LN</a>
+                </div>
+              </div>
+
+              {/* Identity details footer text */}
+              <div className="pt-6 pb-2 text-left">
+                <span className="font-roboto-condensed text-xs font-black uppercase text-deep-gray tracking-wider">
+                  {member.role}
+                </span>
+                <h3 className="font-roboto-condensed text-xl font-black uppercase text-dark-black mt-1">
+                  {member.name}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- TESTIMONIALS COMPONENT ---------------- */
+function TestimonialsSection() {
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
+
+  return (
+    <section className="py-20 lg:py-32 bg-bg-deep border-b border-border-green/20 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-center">
+          {/* Left Summary Box */}
+          <div className="lg:col-span-4 flex flex-col justify-between border border-border-green rounded-[40px] bg-light-green p-8 md:p-10 relative overflow-hidden text-left h-full">
+            <div>
+              <span className="inline-block rounded-full border border-border-green px-4 py-1 text-xs font-black uppercase tracking-widest text-deep-gray bg-white mb-6">
+                Testimonial
+              </span>
+
+              {/* Overlapping Client mini-ticket */}
+              <div className="flex items-center -space-x-3 mb-8">
+                {testimonialsList.map((client, i) => (
+                  <img
+                    key={`tav-${i}`}
+                    src={client.avatar}
+                    alt={client.author}
+                    className="h-10 w-10 rounded-full border-2 border-white object-cover"
+                  />
+                ))}
+                <div className="h-8 w-8 rounded-full bg-primary border-2 border-white flex items-center justify-center text-xs font-black text-dark-black">
+                  +
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black leading-none mb-1">
+                01.25K+
+              </h3>
+              <p className="text-sm font-bold text-deep-gray uppercase tracking-wider">
+                Our Satisfied Clients
+              </p>
+            </div>
+          </div>
+
+          {/* Right Slides Box */}
+          <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-border-green rounded-[40px] p-8 md:p-12 text-left relative min-h-[380px]">
+            <div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTestimonial}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col gap-6"
+                >
+                  <h4 className="font-roboto-condensed text-xl md:text-2xl font-black uppercase leading-relaxed text-dark-black">
+                    "{testimonialsList[activeTestimonial].quote}"
+                  </h4>
+
+                  <div className="h-px bg-border-green/20 w-full my-4" />
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={testimonialsList[activeTestimonial].avatar}
+                        alt={testimonialsList[activeTestimonial].author}
+                        className="h-12 w-12 rounded-full object-cover border border-border-green"
+                      />
+                      <div>
+                        <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black leading-none">
+                          {testimonialsList[activeTestimonial].author}
+                        </h5>
+                        <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">
+                          {testimonialsList[activeTestimonial].role}
+                        </p>
+                      </div>
+                    </div>
+
+                    <img
+                      src={testimonialsList[activeTestimonial].logo}
+                      alt="Brand partner logo"
+                      className="h-7 w-auto object-contain opacity-70 shrink-0 self-start sm:self-auto"
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="flex justify-end gap-3 mt-8">
+              <button
+                onClick={() => setActiveTestimonial((prev) => (prev - 1 + testimonialsList.length) % testimonialsList.length)}
+                className="h-12 w-12 rounded-full border border-border-green flex items-center justify-center hover:bg-border-green/10 transition-colors"
+                aria-label="Previous Testimonial"
+              >
+                ✕
+              </button>
+              <button
+                onClick={() => setActiveTestimonial((prev) => (prev + 1) % testimonialsList.length)}
+                className="h-12 w-12 rounded-full border border-border-green bg-dark-black flex items-center justify-center hover:bg-dark-black/90 transition-colors"
+                aria-label="Next Testimonial"
+              >
+                <img
+                  src="https://cdn.prod.website-files.com/699bd36545e668ad55d3ae1b/69a2b834e27818e867fccdb6_Arrow%20-%20Right.svg"
+                  alt="Arrow Right"
+                  className="h-5 w-5 text-white"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- PARTNERS SECTION (3D ROTATION) ---------------- */
+function PartnersSection() {
+  return (
+    <section className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="flex flex-col items-center mb-16">
+          <div className="h-0.5 w-24 bg-border-green mb-6" />
+          <h2 className="font-roboto-condensed text-xl font-bold uppercase text-deep-gray tracking-widest text-center">
+            partner with +150 brands
+          </h2>
+          <div className="h-0.5 w-24 bg-border-green mt-6" />
+        </div>
+
+        {/* 3D Flip Card grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {partnersList.map((partner, index) => (
+            <div key={`partner-${index}`} className="logo-flip-card group h-32 w-full cursor-pointer relative">
+              <div className="logo-flip-inner absolute inset-0 w-full h-full duration-500 rounded-3xl border border-border-green/60 bg-bg-deep">
+                {/* Front logo */}
+                <div className="logo-flip-front absolute inset-0 w-full h-full flex items-center justify-center p-4">
+                  <img src={partner.front} alt="Brand logo" className="max-h-8 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity" />
+                </div>
+                {/* Back logo */}
+                <div className="logo-flip-back absolute inset-0 w-full h-full flex items-center justify-center p-4 bg-white rounded-3xl">
+                  <img src={partner.back} alt="Brand logo inverted" className="max-h-8 w-auto object-contain opacity-90" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- FAQ ACCORDION COMPONENT ---------------- */
+function FAQSection() {
+  const [openIdx, setOpenIdx] = useState<number | null>(0)
+
+  return (
+    <section id="faq" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-start">
+          {/* Left Title details */}
+          <div className="lg:col-span-4 text-left">
+            <h2 className="font-roboto-condensed text-4xl font-black uppercase text-dark-black mb-6">
+              Frequently asked questions
+            </h2>
+            <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+              Find clear and transparent answers to the most common questions about our services, process, and way of working.
+            </p>
+          </div>
+
+          {/* Accordion Lists Box */}
+          <div className="lg:col-span-8 flex flex-col gap-4">
+            {faqsList.map((faq, idx) => {
+              const isOpen = openIdx === idx
+              return (
+                <div
+                  key={idx}
+                  className="rounded-3xl border border-border-green/60 bg-white overflow-hidden transition-all duration-300"
+                >
+                  <button
+                    onClick={() => setOpenIdx(isOpen ? null : idx)}
+                    className="flex w-full items-center justify-between p-6 text-left"
+                  >
+                    <span className="font-roboto-condensed text-lg md:text-xl font-black uppercase text-dark-black">
+                      {faq.question}
+                    </span>
+                    <div className="h-8 w-8 rounded-full border border-border-green/60 flex items-center justify-center shrink-0 bg-bg-deep text-dark-black font-black transition-transform duration-300">
+                      {isOpen ? '✕' : '+'}
+                    </div>
+                  </button>
+
+                  <motion.div
+                    initial={false}
+                    animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden px-6"
+                  >
+                    <p className="pb-6 text-left text-black-main font-medium leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </motion.div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- BLOGS SECTION ---------------- */
+function BlogsSection() {
+  return (
+    <section id="blogs" className="py-20 lg:py-32 bg-light-green border-b border-border-green/20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Title */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+            The latest blogs & trends
+          </h2>
+          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+            We are a cause-led digital marketing and brand agency dedicated to helping businesses grow with purpose. We are a cause-led digital marketing.
+          </p>
+        </div>
+
+        {/* Blogs cards grid */}
+        <div className="grid gap-8 md:grid-cols-3 mt-12">
+          {blogsList.map((blog, idx) => (
+            <article key={idx} className="group flex flex-col justify-between rounded-[40px] border border-border-green bg-bg-deep p-6 relative overflow-hidden text-left cursor-pointer">
+              <div>
+                {/* Author Info */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-xs font-black uppercase text-deep-gray tracking-wider">
+                    {blog.author}
+                  </span>
+                  <span className="text-xs font-bold text-deep-gray">
+                    {blog.date}
+                  </span>
+                </div>
+
+                {/* Category chip */}
+                <div className="mb-6">
+                  <span className="inline-block rounded-full bg-white border border-border-green px-4 py-1 text-xs font-bold uppercase tracking-wider text-dark-black">
+                    {blog.category}
+                  </span>
+                </div>
+
+                {/* Thumbnail Image */}
+                <div className="h-48 w-full overflow-hidden rounded-2xl border border-border-green/20 bg-white mb-6">
+                  <img
+                    src={blog.image}
+                    alt={blog.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                {/* Article Header title */}
+                <h3 className="font-roboto-condensed text-xl md:text-2xl font-black uppercase text-dark-black mb-4 group-hover:text-primary transition-colors">
+                  {blog.title}
+                </h3>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium leading-relaxed text-black-main mt-4">
+                  {blog.excerpt}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------------- FOOTER SECTION ---------------- */
 function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <footer className="section flex flex-col justify-between gap-8 border-t border-[var(--line)] py-12 text-[var(--muted)] md:flex-row">
-      <p className="font-black text-[var(--text)]">Brand1Solutions</p>
-      <p>Premium web design, development, branding, and growth systems.</p>
-      <a href="#hero" className="font-black text-[var(--text)]">Back to top</a>
+    <footer id="contact" className="bg-light-green pt-20 relative overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-start pb-16">
+          {/* Newsletter Box */}
+          <div className="lg:col-span-5 text-left border border-border-green bg-bg-deep rounded-[40px] p-8 md:p-10 relative overflow-hidden">
+            <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black mb-6">
+              Subscribe to our newsletter
+            </h4>
+
+            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
+              <input
+                type="email"
+                placeholder="Enter Your Email..."
+                required
+                className="w-full rounded-full border border-border-green/80 bg-white px-6 py-4 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 text-dark-black"
+              />
+              <button
+                type="submit"
+                className="w-full rounded-full bg-dark-black py-4 font-roboto-condensed text-lg uppercase tracking-wider font-bold text-white transition-colors hover:bg-dark-black/90 cursor-pointer"
+              >
+                Get Started
+              </button>
+            </form>
+          </div>
+
+          {/* Menus / Directories */}
+          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-8 text-left">
+            <div>
+              <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black mb-6">
+                Menus
+              </h5>
+              <div className="flex flex-col gap-3 font-semibold text-deep-gray">
+                <a href="#about" className="hover:text-dark-black transition-colors">Home</a>
+                <a href="#about" className="hover:text-dark-black transition-colors">About</a>
+                <a href="#services" className="hover:text-dark-black transition-colors">Service</a>
+                <a href="#projects" className="hover:text-dark-black transition-colors">Projects</a>
+                <a href="#faq" className="hover:text-dark-black transition-colors">FAQ</a>
+              </div>
+            </div>
+
+            <div>
+              <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black mb-6">
+                Pages
+              </h5>
+              <div className="flex flex-col gap-3 font-semibold text-deep-gray">
+                <a href="#" className="hover:text-dark-black transition-colors">Style Guide</a>
+                <a href="#" className="hover:text-dark-black transition-colors">License</a>
+                <a href="#" className="hover:text-dark-black transition-colors">Changelog</a>
+                <a href="#" className="hover:text-dark-black transition-colors">404 Page</a>
+                <a href="#" className="hover:text-dark-black transition-colors">Password</a>
+              </div>
+            </div>
+
+            <div className="col-span-2 md:col-span-1">
+              <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black mb-6">
+                Contact
+              </h5>
+              <div className="flex flex-col gap-4 text-deep-gray">
+                <a href="mailto:contact@brand1solution.com" className="font-bold text-dark-black hover:underline transition-all">
+                  contact@brand1solution.com
+                </a>
+                <p className="text-sm font-medium leading-relaxed">
+                  1901 Thornridge Cir. <br />Shiloh, Hawaii 81063
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider line progress */}
+        <div className="h-0.5 bg-border-green/30 w-full relative overflow-hidden mb-8">
+          <div className="absolute top-0 bottom-0 left-0 bg-primary w-2/3" />
+        </div>
+
+        {/* Footer Sub-links and copyright */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-12 text-sm font-bold text-deep-gray uppercase tracking-wider relative z-10">
+          <div className="flex items-center gap-6">
+            <a href="#" className="hover:text-dark-black transition-colors">Facebook</a>
+            <a href="#" className="hover:text-dark-black transition-colors">Instagram</a>
+            <a href="#" className="hover:text-dark-black transition-colors">Twitter</a>
+            <a href="#" className="hover:text-dark-black transition-colors">Linkedin</a>
+          </div>
+
+          <p className="normal-case font-medium">
+            © {currentYear} Designed by <a href="#" className="hover:text-dark-black font-semibold">Olynex</a>. Powered by <a href="#" className="hover:text-dark-black font-semibold">Webflow</a> & React.
+          </p>
+        </div>
+
+        {/* Giant header signature footer text */}
+        <div className="relative pointer-events-none select-none text-center leading-none mt-4">
+          <h3 className="font-roboto-condensed text-[10vw] md:text-[11vw] font-black uppercase tracking-tight text-border-green/20 select-none whitespace-nowrap">
+            Brand1 Solution
+          </h3>
+        </div>
+      </div>
     </footer>
   )
 }
