@@ -38,9 +38,17 @@
 
 body {
   margin: 0;
-  background-color: var(--bg);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(59,130,246,0.10), transparent 28rem),
+    radial-gradient(circle at 86% 18%, rgba(147,197,253,0.18), transparent 26rem),
+    var(--bg);
   color: var(--text);
   overflow-x: hidden;
+}
+
+::selection {
+  background: #3b82f6;
+  color: #ffffff;
 }
 
 /* ── Animations ── */
@@ -172,32 +180,34 @@ body {
 /* Subtle blue grid texture */
 .hero-grid-bg {
   background-image:
-    linear-gradient(rgba(147,197,253,0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(147,197,253,0.15) 1px, transparent 1px);
+    linear-gradient(rgba(147,197,253,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(147,197,253,0.18) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.90), transparent 36rem);
   background-size: 60px 60px;
 }
 
 /* Animated blue glow orb */
 .hero-glow-orb {
-  background: radial-gradient(circle, rgba(59,130,246,0.30) 0%, rgba(59,130,246,0.0) 70%);
+  background: radial-gradient(circle, rgba(59,130,246,0.32) 0%, rgba(147,197,253,0.10) 38%, rgba(59,130,246,0.0) 72%);
   filter: blur(2px);
 }
 
 /* Stat card glass */
 .hero-stat-card {
-  background: rgba(255,255,255,0.70);
+  background: rgba(255,255,255,0.78);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(147,197,253,0.55);
   border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(10,15,30,0.08);
+  box-shadow: 0 16px 40px rgba(10,15,30,0.10);
 }
 
 /* Blue pill tag */
 .hero-tag {
-  background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0.05) 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(59,130,246,0.10) 100%);
   border: 1px solid rgba(59,130,246,0.40);
   border-radius: 999px;
+  box-shadow: 0 12px 30px rgba(10,15,30,0.08);
 }
 
 /* Animated underline accent */
