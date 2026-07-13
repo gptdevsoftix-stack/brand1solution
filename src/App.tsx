@@ -122,33 +122,6 @@ const projectsList: Project[] = [
   },
 ];
 
-const teamList: TeamMember[] = [
-  {
-    name: "Theresa Webb",
-    role: "Marketing Specialist",
-    image: "/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp",
-    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
-  },
-  {
-    name: "Kristin Watson",
-    role: "Marketing Specialist",
-    image: "/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp",
-    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
-  },
-  {
-    name: "Guy Hawkins",
-    role: "Marketing Specialist",
-    image: "/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp",
-    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
-  },
-  {
-    name: "Ron Williamson",
-    role: "Marketing Specialist",
-    image: "/site-images/site-24-69a5069ba1ea7f84bf56b8d6-mask-group-27-.webp",
-    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
-  },
-];
-
 const testimonialsList: Testimonial[] = [
   {
     quote:
