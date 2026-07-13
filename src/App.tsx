@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 
 type MenuOpenState = boolean;
@@ -22,6 +23,18 @@ type Project = {
   scope: string[];
 };
 
+type TeamMember = {
+  name: string;
+  role: string;
+  image: string;
+  social: {
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    linkedin: string;
+  };
+};
+
 type Testimonial = {
   quote: string;
   author: string;
@@ -42,6 +55,16 @@ type BlogItem = {
   title: string;
   excerpt: string;
   image: string;
+};
+
+type ContactSubmission = {
+  id: string;
+  name: string;
+  email: string;
+  service: string;
+  budget: string;
+  message: string;
+  submittedAt: string;
 };
 
 const servicesList: Service[] = [
@@ -119,6 +142,33 @@ const projectsList: Project[] = [
     category: "Brand Experience",
     result: "+48% engagement",
     scope: ["Identity Refresh", "Content System", "UX Direction"],
+  },
+];
+
+const teamList: TeamMember[] = [
+  {
+    name: "Theresa Webb",
+    role: "Marketing Specialist",
+    image: "/site-images/site-21-69a5069b00fa7ef312d5e9f6-mask-group-24-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
+  },
+  {
+    name: "Kristin Watson",
+    role: "Marketing Specialist",
+    image: "/site-images/site-22-69a5069b178148eee153f96c-mask-group-25-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
+  },
+  {
+    name: "Guy Hawkins",
+    role: "Marketing Specialist",
+    image: "/site-images/site-23-69a5069b178148eee153f96f-mask-group-26-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
+  },
+  {
+    name: "Ron Williamson",
+    role: "Marketing Specialist",
+    image: "/site-images/site-24-69a5069ba1ea7f84bf56b8d6-mask-group-27-.webp",
+    social: { facebook: "#", instagram: "#", twitter: "#", linkedin: "#" },
   },
 ];
 
@@ -290,6 +340,8 @@ function App() {
         {/* FAQ list */}
         <FAQSection />
 
+        <ContactSection />
+
         {/* Blogs list */}
       </main>
 
@@ -336,9 +388,6 @@ function Header({
           </a>
           <a href="#faq" className="hover:text-primary transition-colors">
             FAQ
-          </a>
-          <a href="#blogs" className="hover:text-primary transition-colors">
-            Blogs
           </a>
         </nav>
 
@@ -1165,7 +1214,7 @@ function ServicesSection() {
                   pointerEvents: "none",
                   zIndex: 30,
                 }}
-                    className="hidden lg:block w-72 aspect-[4/3] border-2 border-white rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 bg-bg-deep"
+                className="hidden lg:block w-72 aspect-[4/3] border-2 border-white rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 bg-bg-deep"
               >
                 <img
                   src={servicesList[hoveredIdx].image}
@@ -1402,29 +1451,29 @@ function ProcessSection({
   const steps = [
     {
       num: "01",
-      title: "Audit & Direction",
-      copy: "We clarify your offer, audience, goals, and current digital gaps so the project starts with a sharp direction.",
+      title: "Discovery",
+      copy: "We dive deep into your brand, goals, and target audience to build a solid foundation.",
       image:
         "/site-images/site-17-699fcf647fca9ec7764151b7-simplification-3-.webp",
     },
     {
       num: "02",
-      title: "Strategy Map",
-      copy: "We define messaging, user journeys, content priorities, and growth channels before design or development begins.",
+      title: "Strategy",
+      copy: "We craft a tailored digital strategy aligned with your business objectives.",
       image:
         "/site-images/site-16-699fcf63a70c9af4c0143b31-simplification-4-.webp",
     },
     {
       num: "03",
       title: "Design & Build",
-      copy: "We turn the strategy into polished interfaces, responsive pages, conversion flows, and scalable technical foundations.",
+      copy: "Our team brings the vision to life with pixel-perfect design and clean code.",
       image:
         "/site-images/site-15-699fcf6335fca42deeee7c84-simplification-5-.webp",
     },
     {
       num: "04",
-      title: "Launch & Improve",
-      copy: "We launch carefully, measure performance, and keep improving the experience so your brand keeps gaining momentum.",
+      title: "Launch & Grow",
+      copy: "We launch your project and provide ongoing support to drive real results.",
       image: "/site-images/brand1-service-seo-growth.png",
     },
   ];
@@ -1432,128 +1481,166 @@ function ProcessSection({
   return (
     <section
       id="process"
-      className="relative overflow-hidden py-20 lg:py-32 bg-dark-black border-b border-border-blue/20"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20"
     >
-      <div className="absolute inset-0 hero-grid-bg opacity-10" />
-      <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl pointer-events-none" />
-      <div className="absolute -left-36 bottom-0 h-[320px] w-[320px] rounded-full bg-primary-light/10 blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
-        <div className="mb-14 grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-6 text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-light mb-5">
-              <span className="h-2 w-2 rounded-full bg-primary" />
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-start">
+          {/* Title Left */}
+          <div className="lg:col-span-4 text-left">
+            <h2 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black mb-6">
               How We Work
-            </span>
-            <h2 className="font-roboto-condensed text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tight leading-[0.92]">
-              A Clear Process <br />
-              Built For Growth
             </h2>
-          </div>
-          <div className="lg:col-span-6 text-left lg:text-right">
-            <p className="font-roboto text-lg font-medium leading-relaxed text-white/65 max-w-2xl lg:ml-auto">
-              We keep the workflow transparent, focused, and measurable from
-              the first strategy call through launch and optimization.
+            <p className="font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+              A focused process that moves from discovery to strategy, design,
+              launch, and measurable growth.
             </p>
           </div>
-        </div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {steps.map((step, idx) => {
-            const isActive = activeStep === idx;
-            return (
-              <button
-                key={step.num}
-                type="button"
-                onClick={() => setActiveStep(idx)}
-                onMouseEnter={() => setActiveStep(idx)}
-                className={`group relative min-h-[330px] overflow-hidden rounded-[30px] border p-6 text-left transition-all duration-500 ${
-                  isActive
-                    ? "border-primary bg-white text-dark-black shadow-2xl shadow-primary/20 -translate-y-2"
-                    : "border-white/10 bg-white/5 text-white hover:border-primary/50 hover:bg-white/10"
-                }`}
-              >
-                <div className="absolute inset-x-0 top-0 h-1 bg-primary transition-transform duration-500 origin-left scale-x-0 group-hover:scale-x-100" />
-
-                <div className="mb-8 flex items-center justify-between gap-4">
-                  <span
-                    className={`font-roboto-condensed text-5xl font-black leading-none ${
-                      isActive ? "text-primary" : "text-white/25"
-                    }`}
-                  >
-                    {step.num}
-                  </span>
-                  <span
-                    className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${
-                      isActive
-                        ? "border-border-blue bg-bg-deep"
-                        : "border-white/10 bg-white/10"
-                    }`}
-                  >
-                    <img
-                      src={step.image}
-                      alt=""
-                      className="h-8 w-8 object-contain"
-                    />
-                  </span>
-                </div>
-
-                <h3 className="font-roboto-condensed text-2xl md:text-3xl font-black uppercase leading-none">
-                  {step.title}
-                </h3>
-                <p
-                  className={`mt-5 text-sm font-medium leading-relaxed ${
-                    isActive ? "text-deep-gray" : "text-white/60"
-                  }`}
+          {/* Stepper Center/Right */}
+          <div className="lg:col-span-8 grid gap-8 md:grid-cols-12">
+            {/* SVG Connector step line */}
+            <div className="md:col-span-2 hidden md:flex flex-col items-center relative py-4">
+              {steps.map((_, i) => (
+                <div
+                  key={`ind-${i}`}
+                  className="flex flex-col items-center relative h-36"
                 >
-                  {step.copy}
-                </p>
-
-                <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
-                  <span
-                    className={`h-px flex-1 ${
-                      isActive ? "bg-border-blue" : "bg-white/10"
-                    }`}
-                  />
-                  <span
-                    className={`ml-4 flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-45 ${
-                      isActive ? "bg-primary text-white" : "bg-white/10 text-white"
-                    }`}
+                  {/* Step ball circle */}
+                  <button
+                    onClick={() => setActiveStep(i)}
+                    className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 font-bold ${activeStep === i ? "bg-primary border-primary text-white scale-110 shadow-lg" : "bg-white border-border-blue text-deep-gray"}`}
                   >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                      />
-                    </svg>
-                  </span>
+                    {i + 1}
+                  </button>
+                  {/* Vertical connecting line indicator */}
+                  {i < steps.length - 1 && (
+                    <div className="absolute top-10 bottom-0 left-[19px] w-0.5 bg-border-blue/45 overflow-hidden">
+                      {activeStep === i && (
+                        <div className="absolute top-0 w-full h-full bg-primary animate-pulse" />
+                      )}
+                    </div>
+                  )}
                 </div>
-              </button>
-            );
-          })}
+              ))}
+            </div>
+
+            {/* Slider cards box */}
+            <div className="md:col-span-10 flex flex-col gap-6">
+              {steps.map((step, idx) => {
+                const isActive = activeStep === idx;
+                return (
+                  <div
+                    key={step.num}
+                    onClick={() => setActiveStep(idx)}
+                    className={`rounded-[40px] border border-border-blue/60 p-8 text-left transition-all duration-500 cursor-pointer ${isActive ? "bg-white shadow-xl translate-x-2" : "bg-bg-deep/40 opacity-70"}`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-bg-deep border border-border-blue flex items-center justify-center shrink-0">
+                          <img
+                            src={step.image}
+                            alt={step.title}
+                            className="h-7 w-7 object-contain"
+                          />
+                        </div>
+                        <div>
+                          <span className="font-roboto-condensed text-xs font-black uppercase text-deep-gray tracking-wider">
+                            {step.num}
+                          </span>
+                          <h3 className="font-roboto-condensed text-2xl font-black uppercase text-dark-black leading-none">
+                            {step.title}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-black-main font-medium leading-relaxed">
+                      {step.copy}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- TEAM SECTION ---------------- */
+function TeamSection() {
+  return (
+    <section
+      id="team"
+      className="py-20 lg:py-32 bg-light-blue border-b border-border-blue/20"
+    >
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        {/* Title */}
+        <div className="grid gap-6 lg:grid-cols-12 mb-16 items-start">
+          <h2 className="lg:col-span-4 text-left font-roboto-condensed text-4xl font-black uppercase text-dark-black tracking-tight">
+            Our Team Members
+          </h2>
+          <p className="lg:col-span-8 text-left font-roboto text-lg font-medium leading-relaxed text-deep-gray">
+            A seamless journey that transforms ideas into impactful solutions
+            through creativity, strategy, and performance.
+          </p>
         </div>
 
-        <div className="mt-10 rounded-[28px] border border-white/10 bg-white/5 p-5 text-left backdrop-blur-md md:flex md:items-center md:justify-between md:gap-6">
-          <p className="text-sm font-semibold leading-relaxed text-white/65">
-            Current focus:{" "}
-            <span className="text-white">
-              {steps[activeStep].title}
-            </span>{" "}
-            keeps every decision connected to the next milestone.
-          </p>
-          <a
-            href="#contact"
-            className="mt-4 inline-flex rounded-full bg-primary px-6 py-3 font-roboto-condensed text-sm font-black uppercase tracking-wider text-white transition-colors hover:bg-primary-dark md:mt-0"
-          >
-            Start With Us
-          </a>
+        {/* Team Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12">
+          {teamList.map((member) => (
+            <div
+              key={member.name}
+              className="group relative flex flex-col rounded-[32px] border border-border-blue bg-bg-deep p-4 overflow-hidden"
+            >
+              {/* Photo Box */}
+              <div className="relative h-80 w-full overflow-hidden rounded-[24px] border border-border-blue/30 bg-white">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Slide Up Socials Drawer overlay */}
+                <div className="absolute inset-x-0 bottom-0 translate-y-full bg-dark-black/80 backdrop-blur-sm p-4 transition-transform duration-300 group-hover:translate-y-0 flex justify-center gap-4">
+                  <a
+                    href={member.social.facebook}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    FB
+                  </a>
+                  <a
+                    href={member.social.instagram}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    IG
+                  </a>
+                  <a
+                    href={member.social.twitter}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    TW
+                  </a>
+                  <a
+                    href={member.social.linkedin}
+                    className="text-white hover:text-primary transition-colors"
+                  >
+                    LN
+                  </a>
+                </div>
+              </div>
+
+              {/* Identity details footer text */}
+              <div className="pt-6 pb-2 text-left">
+                <span className="font-roboto-condensed text-xs font-black uppercase text-deep-gray tracking-wider">
+                  {member.role}
+                </span>
+                <h3 className="font-roboto-condensed text-xl font-black uppercase text-dark-black mt-1">
+                  {member.name}
+                </h3>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -1563,92 +1650,46 @@ function ProcessSection({
 /* ---------------- TESTIMONIALS COMPONENT ---------------- */
 function TestimonialsSection() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const activeClient = testimonialsList[activeTestimonial];
 
   return (
-    <section className="relative py-20 lg:py-32 bg-bg-deep border-b border-border-blue/20 overflow-hidden">
-      <div className="absolute left-[-160px] top-20 h-[360px] w-[360px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-      <div className="absolute right-[-120px] bottom-10 h-[320px] w-[320px] rounded-full bg-border-blue/30 blur-3xl pointer-events-none" />
-      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
-        <div className="mb-14 grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-6 text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border-blue/50 bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-primary mb-5 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-primary" />
-              Testimonials
-            </span>
-            <h2 className="font-roboto-condensed text-4xl md:text-5xl lg:text-6xl font-black uppercase text-dark-black tracking-tight leading-[0.92]">
-              What Clients Say <br />
-              <span className="text-primary">After Launch</span>
-            </h2>
-          </div>
-          <p className="lg:col-span-6 text-left lg:text-right text-lg font-medium leading-relaxed text-deep-gray max-w-2xl lg:ml-auto">
-            Real feedback from teams who trusted Brand1 Solution to sharpen
-            their digital presence, campaign quality, and growth systems.
-          </p>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-12 items-stretch">
+    <section className="py-20 lg:py-32 bg-bg-deep border-b border-border-blue/20 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="grid gap-12 lg:grid-cols-12 items-center">
           {/* Left Summary Box */}
-          <div className="lg:col-span-4 flex flex-col justify-between border border-white/10 rounded-[34px] bg-dark-black p-8 md:p-10 relative overflow-hidden text-left h-full min-h-[430px] shadow-2xl shadow-primary/10 text-white">
-            <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/30 blur-3xl" />
+          <div className="lg:col-span-4 flex flex-col justify-between border border-border-blue rounded-[40px] bg-light-blue p-8 md:p-10 relative overflow-hidden text-left h-full">
             <div>
-              <span className="inline-block rounded-full border border-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary-light bg-white/5 mb-8">
-                Trusted Feedback
+              <span className="inline-block rounded-full border border-border-blue px-4 py-1 text-xs font-black uppercase tracking-widest text-deep-gray bg-white mb-6">
+                Testimonial
               </span>
 
               {/* Overlapping Client mini-ticket */}
               <div className="flex items-center -space-x-3 mb-8">
                 {testimonialsList.map((client, i) => (
-                  <button
+                  <img
                     key={`tav-${i}`}
-                    type="button"
-                    onClick={() => setActiveTestimonial(i)}
-                    className={`h-12 w-12 overflow-hidden rounded-full border-2 transition-all duration-300 ${
-                      activeTestimonial === i
-                        ? "z-10 scale-110 border-primary"
-                        : "border-white"
-                    }`}
-                    aria-label={`Show testimonial from ${client.author}`}
-                  >
-                    <img
-                      src={client.avatar}
-                      alt={client.author}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
+                    src={client.avatar}
+                    alt={client.author}
+                    className="h-10 w-10 rounded-full border-2 border-white object-cover"
+                  />
                 ))}
-                <div className="h-9 w-9 rounded-full bg-primary border-2 border-white flex items-center justify-center text-xs font-black text-white">
+                <div className="h-8 w-8 rounded-full bg-primary border-2 border-white flex items-center justify-center text-xs font-black text-dark-black">
                   +
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="font-roboto-condensed text-5xl md:text-6xl font-black uppercase text-primary leading-none mb-3">
-                1.25K+
+              <h3 className="font-roboto-condensed text-3xl md:text-4xl font-black uppercase text-dark-black leading-none mb-1">
+                01.25K+
               </h3>
-              <p className="text-sm font-bold text-white/60 uppercase tracking-wider leading-relaxed">
-                Client touchpoints managed across launches, campaigns, and
-                growth systems.
+              <p className="text-sm font-bold text-deep-gray uppercase tracking-wider">
+                Our Satisfied Clients
               </p>
-              <div className="mt-8 grid grid-cols-2 gap-3">
-                {["Strategy", "Design", "Launch", "Growth"].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-center text-xs font-black uppercase tracking-wider text-white/75"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
             </div>
           </div>
 
           {/* Right Slides Box */}
-          <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-border-blue rounded-[34px] p-8 md:p-12 text-left relative min-h-[430px] shadow-2xl shadow-primary/10 overflow-hidden">
-            <div className="absolute right-8 top-6 font-roboto-condensed text-[8rem] font-black leading-none text-primary/10">
-              "
-            </div>
+          <div className="lg:col-span-8 flex flex-col justify-between bg-white border border-border-blue rounded-[40px] p-8 md:p-12 text-left relative min-h-[380px]">
             <div>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -1657,26 +1698,10 @@ function TestimonialsSection() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.4 }}
-                  className="relative z-10 flex flex-col gap-6"
+                  className="flex flex-col gap-6"
                 >
-                  <div className="flex flex-wrap items-center gap-2">
-                    {[...Array(5)].map((_, index) => (
-                      <svg
-                        key={index}
-                        className="h-5 w-5 text-primary"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 00.95-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                    <span className="ml-2 rounded-full bg-bg-deep px-4 py-2 text-xs font-black uppercase tracking-widest text-deep-gray">
-                      Verified Client
-                    </span>
-                  </div>
-                  <h4 className="font-roboto-condensed text-2xl md:text-4xl lg:text-5xl font-black uppercase leading-[1.05] text-dark-black">
-                    {activeClient.quote}
+                  <h4 className="font-roboto-condensed text-xl md:text-2xl font-black uppercase leading-relaxed text-dark-black">
+                    "{testimonialsList[activeTestimonial].quote}"
                   </h4>
 
                   <div className="h-px bg-border-blue/20 w-full my-4" />
@@ -1684,24 +1709,24 @@ function TestimonialsSection() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
                       <img
-                        src={activeClient.avatar}
-                        alt={activeClient.author}
-                        className="h-16 w-16 rounded-full object-cover border border-border-blue"
+                        src={testimonialsList[activeTestimonial].avatar}
+                        alt={testimonialsList[activeTestimonial].author}
+                        className="h-12 w-12 rounded-full object-cover border border-border-blue"
                       />
                       <div>
-                        <h5 className="font-roboto-condensed text-xl font-black uppercase text-dark-black leading-none">
-                          {activeClient.author}
+                        <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black leading-none">
+                          {testimonialsList[activeTestimonial].author}
                         </h5>
                         <p className="text-xs font-bold text-deep-gray uppercase tracking-wider mt-1">
-                          {activeClient.role}
+                          {testimonialsList[activeTestimonial].role}
                         </p>
                       </div>
                     </div>
 
                     <img
-                      src={activeClient.logo}
+                      src={testimonialsList[activeTestimonial].logo}
                       alt="Brand partner logo"
-                      className="h-8 w-auto object-contain opacity-65 shrink-0 self-start sm:self-auto"
+                      className="h-7 w-auto object-contain opacity-70 shrink-0 self-start sm:self-auto"
                     />
                   </div>
                 </motion.div>
@@ -1718,7 +1743,7 @@ function TestimonialsSection() {
                       testimonialsList.length,
                   )
                 }
-                className="h-12 w-12 rounded-full border border-border-blue flex items-center justify-center hover:bg-bg-deep transition-colors"
+                className="h-12 w-12 rounded-full border border-border-blue flex items-center justify-center hover:bg-border-blue/10 transition-colors"
                 aria-label="Previous Testimonial"
               >
                 ✕
@@ -1729,7 +1754,7 @@ function TestimonialsSection() {
                     (prev) => (prev + 1) % testimonialsList.length,
                   )
                 }
-                className="h-12 w-12 rounded-full border border-dark-black bg-dark-black flex items-center justify-center hover:bg-primary hover:border-primary transition-colors"
+                className="h-12 w-12 rounded-full border border-border-green bg-dark-black flex items-center justify-center hover:bg-dark-black/90 transition-colors"
                 aria-label="Next Testimonial"
               >
                 <img
@@ -1923,13 +1948,247 @@ function FAQSection() {
 //   )
 // }
 
+/* ---------------- CONTACT SECTION ---------------- */
+function ContactSection() {
+  const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    service: "Website Design",
+    budget: "$0k - $1k",
+    message: "",
+  });
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const nextSubmission: ContactSubmission = {
+      id: `request-${Date.now()}`,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      service: formData.service,
+      budget: formData.budget,
+      message: formData.message.trim(),
+      submittedAt: new Intl.DateTimeFormat("en", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(new Date()),
+    };
+
+    setSubmissions((current) => [nextSubmission, ...current]);
+    setFormData({
+      name: "",
+      email: "",
+      service: "Website Design",
+      budget: "$0k - $1k",
+      message: "",
+    });
+  };
+
+  return (
+    <section
+      id="contact"
+      className="relative overflow-hidden bg-dark-black py-20 lg:py-32"
+    >
+      <div className="absolute inset-0 hero-grid-bg opacity-10" />
+      <div className="absolute -left-32 top-16 h-[380px] w-[380px] rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+      <div className="absolute -right-24 bottom-0 h-[320px] w-[320px] rounded-full bg-primary-light/10 blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
+        <div className="mb-12 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-6 text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-light mb-5">
+              <span className="h-2 w-2 rounded-full bg-primary" />
+              Contact Us
+            </span>
+            <h2 className="font-roboto-condensed text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tight leading-[0.92]">
+              Let&apos;s Build Your <br />
+              <span className="text-primary">Next Digital Win</span>
+            </h2>
+          </div>
+          <p className="lg:col-span-6 text-left lg:text-right text-lg font-medium leading-relaxed text-white/60 max-w-2xl lg:ml-auto">
+            Send a quick project request and we&apos;ll shape the next step with
+            the right strategy, timeline, and launch plan.
+          </p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-12">
+          <div className="lg:col-span-5 rounded-[34px] border border-white/10 bg-white/5 p-6 md:p-8 text-left text-white backdrop-blur-md">
+            <h3 className="font-roboto-condensed text-2xl font-black uppercase leading-none">
+              Direct Contact
+            </h3>
+            <div className="mt-8 grid gap-5">
+              {[
+                ["Email", "contact@brand1solution.com"],
+                ["Response", "Within 24 hours"],
+                ["Projects", "Branding, websites, apps, growth"],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-[24px] border border-white/10 bg-white/5 p-5"
+                >
+                  <span className="text-xs font-black uppercase tracking-widest text-primary-light">
+                    {label}
+                  </span>
+                  <p className="mt-2 text-base font-bold text-white/85">
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 rounded-[34px] border border-border-blue bg-white p-6 md:p-8 text-left shadow-2xl shadow-primary/10">
+            <form onSubmit={handleSubmit} className="grid gap-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(event) =>
+                    setFormData({ ...formData, name: event.target.value })
+                  }
+                  placeholder="Your Name"
+                  className="h-14 rounded-2xl border border-border-blue/70 bg-bg-deep px-5 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20"
+                />
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(event) =>
+                    setFormData({ ...formData, email: event.target.value })
+                  }
+                  placeholder="Email Address"
+                  className="h-14 rounded-2xl border border-border-blue/70 bg-bg-deep px-5 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20"
+                />
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <select
+                  value={formData.service}
+                  onChange={(event) =>
+                    setFormData({ ...formData, service: event.target.value })
+                  }
+                  className="h-14 rounded-2xl border border-border-blue/70 bg-bg-deep px-5 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20"
+                >
+                  <option>Website Design</option>
+                  <option>Brand Strategy</option>
+                  <option>App Development</option>
+                  <option>Digital Marketing</option>
+                </select>
+                <select
+                  value={formData.budget}
+                  onChange={(event) =>
+                    setFormData({ ...formData, budget: event.target.value })
+                  }
+                  className="h-14 rounded-2xl border border-border-blue/70 bg-bg-deep px-5 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20"
+                >
+                  <option>$0k - $500</option>
+                  <option>$500 - $1k</option>
+                  <option>$1k - $10k</option>
+                  <option>$10k+</option>
+                </select>
+              </div>
+
+              <textarea
+                required
+                rows={5}
+                value={formData.message}
+                onChange={(event) =>
+                  setFormData({ ...formData, message: event.target.value })
+                }
+                placeholder="Tell us about your project..."
+                className="rounded-2xl border border-border-blue/70 bg-bg-deep px-5 py-4 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 resize-none"
+              />
+
+              <button
+                type="submit"
+                className="primary-button-hover group flex items-center justify-center gap-3 rounded-full bg-dark-black px-7 py-4 font-roboto-condensed text-lg font-black uppercase tracking-wider text-white transition-colors hover:bg-primary"
+              >
+                Submit Request
+                <svg
+                  className="btn-arrow-slide h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </button>
+            </form>
+
+            <div className="mt-8 rounded-[26px] border border-border-blue/60 bg-bg-deep p-5">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black">
+                  Submitted Requests
+                </h4>
+                <span className="text-xs font-black uppercase tracking-widest text-primary">
+                  {submissions.length} Total
+                </span>
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                {submissions.length === 0 ? (
+                  <p className="rounded-2xl border border-border-blue/50 bg-white px-4 py-4 text-sm font-semibold text-deep-gray">
+                    No requests submitted yet. Fill the form above to see the
+                    submission appear here.
+                  </p>
+                ) : (
+                  submissions.map((submission) => (
+                    <article
+                      key={submission.id}
+                      className="rounded-2xl border border-border-blue/50 bg-white p-4"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black">
+                            {submission.name}
+                          </h5>
+                          <p className="text-sm font-semibold text-deep-gray">
+                            {submission.email}
+                          </p>
+                        </div>
+                        <span className="text-xs font-black uppercase tracking-wider text-primary">
+                          {submission.submittedAt}
+                        </span>
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="rounded-full bg-bg-deep px-3 py-1 text-xs font-bold text-dark-black">
+                          {submission.service}
+                        </span>
+                        <span className="rounded-full bg-bg-deep px-3 py-1 text-xs font-bold text-dark-black">
+                          {submission.budget}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm font-medium leading-relaxed text-deep-gray">
+                        {submission.message}
+                      </p>
+                    </article>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- FOOTER SECTION ---------------- */
 function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer
-      id="contact"
+      id="footer"
       className="bg-light-blue pt-20 relative overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
