@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
-import type { FormEvent } from "react";
+﻿import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 type MenuOpenState = boolean;
@@ -57,14 +56,24 @@ type BlogItem = {
   image: string;
 };
 
-type ContactSubmission = {
-  id: string;
-  name: string;
-  email: string;
-  service: string;
-  budget: string;
-  message: string;
-  submittedAt: string;
+const contactInfo = {
+  email: "info@brand1solutions.com",
+  formSubmitUrl: "https://formsubmit.co/info@brand1solutions.com",
+  address: "14.7 Woodbury Road, Huntington, NY 11743",
+  contacts: [
+    {
+      name: "MICHEL ANDERSON",
+      role: "CEO",
+      phone: "(619) 714-2878",
+      phoneHref: "tel:+16197142878",
+    },
+    {
+      name: "JOHN HAINES",
+      role: "DIRECTOR",
+      phone: "(516) 982-9341",
+      phoneHref: "tel:+15169829341",
+    },
+  ],
 };
 
 const servicesList: Service[] = [
@@ -1950,7 +1959,6 @@ function FAQSection() {
 
 /* ---------------- CONTACT SECTION ---------------- */
 function ContactSection() {
-  const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -1958,34 +1966,6 @@ function ContactSection() {
     budget: "$0k - $1k",
     message: "",
   });
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const nextSubmission: ContactSubmission = {
-      id: `request-${Date.now()}`,
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      service: formData.service,
-      budget: formData.budget,
-      message: formData.message.trim(),
-      submittedAt: new Intl.DateTimeFormat("en", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      }).format(new Date()),
-    };
-
-    setSubmissions((current) => [nextSubmission, ...current]);
-    setFormData({
-      name: "",
-      email: "",
-      service: "Website Design",
-      budget: "$0k - $1k",
-      message: "",
-    });
-  };
 
   return (
     <section
@@ -2020,8 +2000,45 @@ function ContactSection() {
               Direct Contact
             </h3>
             <div className="mt-8 grid gap-5">
+              {contactInfo.contacts.map((contact) => (
+                <div
+                  key={contact.phone}
+                  className="rounded-[24px] border border-white/10 bg-white/5 p-5"
+                >
+                  <span className="text-xs font-black uppercase tracking-widest text-primary-light">
+                    {contact.role}
+                  </span>
+                  <p className="mt-2 text-base font-bold text-white/85">
+                    {contact.name}
+                  </p>
+                  <a
+                    href={contact.phoneHref}
+                    className="mt-1 inline-flex text-sm font-bold text-white/70 transition-colors hover:text-primary-light"
+                  >
+                    {contact.phone}
+                  </a>
+                </div>
+              ))}
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+                <span className="text-xs font-black uppercase tracking-widest text-primary-light">
+                  Email
+                </span>
+                <a
+                  href={`mailto:${contactInfo.email}`}
+                  className="mt-2 inline-flex text-base font-bold text-white/85 transition-colors hover:text-primary-light"
+                >
+                  {contactInfo.email}
+                </a>
+              </div>
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+                <span className="text-xs font-black uppercase tracking-widest text-primary-light">
+                  Address
+                </span>
+                <p className="mt-2 text-base font-bold text-white/85">
+                  {contactInfo.address}
+                </p>
+              </div>
               {[
-                ["Email", "contact@brand1solution.com"],
                 ["Response", "Within 24 hours"],
                 ["Projects", "Branding, websites, apps, growth"],
               ].map(([label, value]) => (
@@ -2041,9 +2058,16 @@ function ContactSection() {
           </div>
 
           <div className="lg:col-span-7 rounded-[34px] border border-border-blue bg-white p-6 md:p-8 text-left shadow-2xl shadow-primary/10">
-            <form onSubmit={handleSubmit} className="grid gap-5">
+            <form
+              action={contactInfo.formSubmitUrl}
+              method="POST"
+              className="grid gap-5"
+            >
+              <input type="hidden" name="_subject" value="New Brand1 Solution project request" />
+              <input type="hidden" name="_captcha" value="false" />
               <div className="grid gap-5 sm:grid-cols-2">
                 <input
+                  name="name"
                   type="text"
                   required
                   value={formData.name}
@@ -2054,6 +2078,7 @@ function ContactSection() {
                   className="h-14 rounded-2xl border border-border-blue/70 bg-bg-deep px-5 text-dark-black outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/20"
                 />
                 <input
+                  name="email"
                   type="email"
                   required
                   value={formData.email}
@@ -2067,6 +2092,7 @@ function ContactSection() {
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <select
+                  name="service"
                   value={formData.service}
                   onChange={(event) =>
                     setFormData({ ...formData, service: event.target.value })
@@ -2079,6 +2105,7 @@ function ContactSection() {
                   <option>Digital Marketing</option>
                 </select>
                 <select
+                  name="budget"
                   value={formData.budget}
                   onChange={(event) =>
                     setFormData({ ...formData, budget: event.target.value })
@@ -2093,6 +2120,7 @@ function ContactSection() {
               </div>
 
               <textarea
+                name="message"
                 required
                 rows={5}
                 value={formData.message}
@@ -2123,58 +2151,6 @@ function ContactSection() {
                 </svg>
               </button>
             </form>
-
-            <div className="mt-8 rounded-[26px] border border-border-blue/60 bg-bg-deep p-5">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <h4 className="font-roboto-condensed text-xl font-black uppercase text-dark-black">
-                  Submitted Requests
-                </h4>
-                <span className="text-xs font-black uppercase tracking-widest text-primary">
-                  {submissions.length} Total
-                </span>
-              </div>
-
-              <div className="mt-5 grid gap-3">
-                {submissions.length === 0 ? (
-                  <p className="rounded-2xl border border-border-blue/50 bg-white px-4 py-4 text-sm font-semibold text-deep-gray">
-                    No requests submitted yet. Fill the form above to see the
-                    submission appear here.
-                  </p>
-                ) : (
-                  submissions.map((submission) => (
-                    <article
-                      key={submission.id}
-                      className="rounded-2xl border border-border-blue/50 bg-white p-4"
-                    >
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <h5 className="font-roboto-condensed text-lg font-black uppercase text-dark-black">
-                            {submission.name}
-                          </h5>
-                          <p className="text-sm font-semibold text-deep-gray">
-                            {submission.email}
-                          </p>
-                        </div>
-                        <span className="text-xs font-black uppercase tracking-wider text-primary">
-                          {submission.submittedAt}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="rounded-full bg-bg-deep px-3 py-1 text-xs font-bold text-dark-black">
-                          {submission.service}
-                        </span>
-                        <span className="rounded-full bg-bg-deep px-3 py-1 text-xs font-bold text-dark-black">
-                          {submission.budget}
-                        </span>
-                      </div>
-                      <p className="mt-3 text-sm font-medium leading-relaxed text-deep-gray">
-                        {submission.message}
-                      </p>
-                    </article>
-                  ))
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -2200,10 +2176,14 @@ function Footer() {
             </h4>
 
             <form
-              onSubmit={(e) => e.preventDefault()}
+              action={contactInfo.formSubmitUrl}
+              method="POST"
               className="flex flex-col gap-3"
             >
+              <input type="hidden" name="_subject" value="New Brand1 Solution newsletter signup" />
+              <input type="hidden" name="_captcha" value="false" />
               <input
+                name="email"
                 type="email"
                 placeholder="Enter Your Email..."
                 required
@@ -2287,14 +2267,27 @@ function Footer() {
               </h5>
               <div className="flex flex-col gap-4 text-deep-gray">
                 <a
-                  href="mailto:contact@brand1solution.com"
+                  href={`mailto:${contactInfo.email}`}
                   className="font-bold text-dark-black hover:underline transition-all"
                 >
-                  contact@brand1solution.com
+                  {contactInfo.email}
                 </a>
+                {contactInfo.contacts.map((contact) => (
+                  <div key={contact.phone} className="text-sm font-medium leading-relaxed">
+                    <p className="font-bold text-dark-black">
+                      {contact.name}
+                    </p>
+                    <p>{contact.role}</p>
+                    <a
+                      href={contact.phoneHref}
+                      className="hover:text-dark-black hover:underline transition-all"
+                    >
+                      {contact.phone}
+                    </a>
+                  </div>
+                ))}
                 <p className="text-sm font-medium leading-relaxed">
-                  1901 Thornridge Cir. <br />
-                  Shiloh, Hawaii 81063
+                  {contactInfo.address}
                 </p>
               </div>
             </div>
@@ -2325,14 +2318,10 @@ function Footer() {
 
           <p className="normal-case font-medium">
             © {currentYear} Designed by{" "}
-            <a href="#" className="hover:text-dark-black font-semibold">
-              Olynex
-            </a>
-            . Powered by{" "}
-            <a href="#" className="hover:text-dark-black font-semibold">
-              Webflow
-            </a>{" "}
-            & React.
+            <a href="https://softixsolution.com" className="hover:text-dark-black transition-colors">
+           softixsolution
+           
+           </a>
           </p>
         </div>
 
@@ -2348,3 +2337,4 @@ function Footer() {
 }
 
 export default App;
+
