@@ -76,6 +76,8 @@ const contactInfo = {
   ],
 };
 
+const brandLogoSrc = "/site-images/brand1-logo.jpeg";
+
 const servicesList: Service[] = [
   {
     id: "01",
@@ -373,12 +375,14 @@ function Header({
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-8">
         <a
           href="/"
-          className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black hover:opacity-90 transition-opacity"
+          className="flex items-center hover:opacity-90 transition-opacity"
+          aria-label="Brand1 Solutions home"
         >
-          <span>Brand1</span>
-          <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">
-            Solution
-          </span>
+          <img
+            src={brandLogoSrc}
+            alt="Brand1 Solutions"
+            className="h-14 w-24 rounded-md object-contain"
+          />
         </a>
 
         {/* Desktop Links */}
@@ -479,11 +483,12 @@ function MenuDrawer({ onClose }: { onClose: () => void }) {
       >
         <div>
           <div className="flex items-center justify-between mb-16">
-            <div className="flex items-center gap-2 font-roboto-condensed text-2xl font-black uppercase tracking-tight text-dark-black">
-              <span>Brand1</span>
-              <span className="rounded-full bg-primary px-3 py-1 text-xs text-white font-extrabold tracking-widest">
-                Solution
-              </span>
+            <div className="flex items-center">
+              <img
+                src={brandLogoSrc}
+                alt="Brand1 Solutions"
+                className="h-16 w-28 rounded-md object-contain"
+              />
             </div>
             <button
               onClick={onClose}
